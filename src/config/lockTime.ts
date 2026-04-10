@@ -11,14 +11,14 @@
  * policies (see supabase/migrations/001_initial_schema.sql) — if you
  * shift the deadline here, update the SQL migration too and re-run it.
  *
- * Time chosen: April 12, 2026 — 11:00 AM Pacific.
+ * Time chosen: Sunday April 12, 2026 — 8:00 AM Pacific.
  *
  * April 12 falls inside US Daylight Saving Time (DST starts March 8,
- * 2026), so 11 AM Pacific === 11 AM PDT === UTC-7 === 18:00 UTC.
- * If you literally meant 11 AM PST (UTC-8), change the offset to -08:00
- * which would be 19:00 UTC.
+ * 2026), so 8 AM Pacific local clock time === 8 AM PDT === UTC-7 ===
+ * 15:00 UTC. (The user requested "8 AM PST", which we interpret as
+ * Pacific local time; in April that's PDT / UTC-7.)
  */
-export const PREDICTIONS_LOCK_AT_ISO = '2026-04-12T11:00:00-07:00';
+export const PREDICTIONS_LOCK_AT_ISO = '2026-04-12T08:00:00-07:00';
 
 export const PREDICTIONS_LOCK_AT_MS = Date.parse(PREDICTIONS_LOCK_AT_ISO);
 

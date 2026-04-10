@@ -128,9 +128,9 @@ CREATE POLICY predictions_read ON predictions FOR SELECT
 
 -- Global cutoff: after this moment, no user can create / edit / delete a
 -- prediction row. Keep this constant in lock-step with src/config/lockTime.ts
--- on the client. April 12, 2026 — 11:00 AM Pacific (PDT, UTC-7) === 18:00 UTC.
+-- on the client. Sunday April 12, 2026 — 8:00 AM Pacific (PDT, UTC-7) === 15:00 UTC.
 CREATE OR REPLACE FUNCTION predictions_unlocked() RETURNS boolean AS $$
-  SELECT now() < TIMESTAMPTZ '2026-04-12 11:00:00-07';
+  SELECT now() < TIMESTAMPTZ '2026-04-12 08:00:00-07';
 $$ LANGUAGE sql STABLE;
 
 DROP POLICY IF EXISTS predictions_own_insert ON predictions;
