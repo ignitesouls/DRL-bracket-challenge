@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Country flag icons */
+@import 'flag-icons/css/flag-icons.min.css';
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: radial-gradient(ellipse at top, #1A1A2E 0%, #0E0E1A 60%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .match-card {
+    @apply bg-bracket-surface border border-bracket-border rounded-md overflow-hidden;
+    @apply shadow-[0_2px_8px_rgba(0,0,0,0.4)];
+    transition: all 150ms ease;
+  }
+
+  .match-card:hover {
+    @apply border-twitch-purple;
+    transform: translateY(-1px);
+  }
+
+  .match-card.live {
+    @apply border-bracket-gold;
+    box-shadow: 0 0 0 1px theme('colors.bracket.gold'),
+      0 0 20px rgba(240, 185, 11, 0.3);
+  }
+
+  .player-slot {
+    @apply flex items-center gap-2 px-3 py-2 text-sm;
+    @apply border-b border-bracket-border last:border-b-0;
+  }
+
+  .player-slot.winner {
+    @apply bg-twitch-purple/10 text-white font-semibold;
+  }
+
+  .player-slot.loser {
+    @apply text-white/40 line-through;
+  }
+
+  .seed-badge {
+    @apply text-[10px] font-bold text-white/50 w-5 text-right;
+  }
+
+  .bracket-title {
+    @apply font-display text-3xl font-extrabold tracking-wider uppercase;
+    @apply text-bracket-gold;
+    text-shadow: 0 2px 8px rgba(240, 185, 11, 0.3);
+  }
+}
