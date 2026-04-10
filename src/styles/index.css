@@ -1,9 +1,11 @@
+/* Country flag icons — MUST stay at the top of the file. CSS requires
+   @import rules to precede any other rules (including @tailwind), or the
+   browser silently drops them. */
+@import 'flag-icons/css/flag-icons.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Country flag icons */
-@import 'flag-icons/css/flag-icons.min.css';
 
 /* ---------------------------------------------------------------------------
    Design tokens — "Trophy Vault Broadcast"
