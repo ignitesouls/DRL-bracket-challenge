@@ -9,6 +9,7 @@ interface MatchEditorProps {
   onSave: (matchId: string, winnerId: string, score: string | null) => Promise<void>;
   onClear: (matchId: string) => Promise<void>;
   onSetStatus: (matchId: string, status: MatchStatus) => Promise<void>;
+  onSetSchedule: (matchId: string, scheduledAt: string | null) => Promise<void>;
 }
 
 /**
@@ -24,9 +25,13 @@ export function MatchEditor({
   onSave,
   onClear,
   onSetStatus,
+  onSetSchedule,
 }: MatchEditorProps) {
   const [winnerId, setWinnerId] = useState<string | null>(match.winnerId);
   const [score, setScore] = useState<string>(match.score ?? '');
+  const [scheduleLocal, setScheduleLocal] = useState<string>(() =>
+    isoToLocalInputValue(match.scheduledAt)
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +39,8 @@ export function MatchEditor({
   useEffect(() => {
     setWinnerId(match.winnerId);
     setScore(match.score ?? '');
-  }, [match.id, match.winnerId, match.score]);
+    setScheduleLocal(isoToLocalInputValue(match.scheduledAt));
+  }, [match.id, match.winnerId, match.score, match.scheduledAt]);
 
   // Close on Escape
   useEffect(() => {
@@ -88,6 +94,35 @@ export function MatchEditor({
       setBusy(false);
     }
   };
+
+  const handleScheduleSave = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const iso = localInputValueToIso(scheduleLocal);
+      await onSetSchedule(match.id, iso);
+    } catch (err) {
+      setError((err as Error)?.message ?? 'Schedule update failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleScheduleClear = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await onSetSchedule(match.id, null);
+      setScheduleLocal('');
+    } catch (err) {
+      setError((err as Error)?.message ?? 'Schedule clear failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const scheduleDirty =
+    isoToLocalInputValue(match.scheduledAt) !== scheduleLocal;
 
   // Quick score buttons depending on selected winner
   const quickScores = (forPlayer: 1 | 2): string[] => {
@@ -170,6 +205,81 @@ export function MatchEditor({
                 </button>
               ))}
             </div>
+            <p
+              className="mt-2"
+              style={{
+                fontSize: 10,
+                color: 'var(--c-text-faint)',
+                letterSpacing: '0.04em',
+              }}
+            >
+              Tip: leave on <em>pending</em> and use the schedule below — the
+              card will auto-flip to LIVE when its start time arrives.
+            </p>
+          </div>
+
+          {/* Schedule */}
+          <div>
+            <div className="section-eyebrow mb-2">Scheduled Start</div>
+            <div className="flex items-center gap-2">
+              <input
+                type="datetime-local"
+                value={scheduleLocal}
+                onChange={(e) => setScheduleLocal(e.target.value)}
+                className="font-mono text-xs px-3 py-2"
+                style={{
+                  background: 'var(--c-bg-2)',
+                  border: '1px solid var(--c-border)',
+                  borderRadius: 2,
+                  color: 'var(--c-text)',
+                  outline: 'none',
+                  flex: 1,
+                  minWidth: 0,
+                  colorScheme: 'dark',
+                }}
+              />
+              <button
+                onClick={handleScheduleSave}
+                disabled={busy || !scheduleDirty}
+                className="btn"
+                style={{
+                  borderColor: scheduleDirty ? 'var(--c-gold)' : 'var(--c-border)',
+                  color: scheduleDirty ? 'var(--c-gold)' : 'var(--c-text-faint)',
+                  background: scheduleDirty
+                    ? 'rgba(240,185,11,0.08)'
+                    : 'transparent',
+                  cursor: scheduleDirty ? 'pointer' : 'not-allowed',
+                }}
+              >
+                Save
+              </button>
+              <button
+                onClick={handleScheduleClear}
+                disabled={busy || !match.scheduledAt}
+                className="btn btn--ghost"
+                style={{
+                  borderColor: 'rgba(255,59,107,0.3)',
+                  color: match.scheduledAt
+                    ? 'var(--c-red)'
+                    : 'var(--c-text-faint)',
+                  cursor: match.scheduledAt ? 'pointer' : 'not-allowed',
+                }}
+              >
+                Clear
+              </button>
+            </div>
+            {match.scheduledAt && (
+              <div
+                className="font-mono mt-2"
+                style={{
+                  fontSize: 10,
+                  color: 'var(--c-text-dim)',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Currently set to {new Date(match.scheduledAt).toLocaleString()}
+              </div>
+            )}
           </div>
 
           {/* Pick winner */}
@@ -315,6 +425,28 @@ export function MatchEditor({
       </div>
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// <input type="datetime-local"> always reads/writes a local-time string
+// shaped 'YYYY-MM-DDTHH:mm'. We need to round-trip that to/from an ISO
+// timestamp (UTC) for storage in Postgres.
+// ---------------------------------------------------------------------------
+function isoToLocalInputValue(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
+}
+
+function localInputValueToIso(local: string): string | null {
+  if (!local) return null;
+  const d = new Date(local);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
 }
 
 // ---------------------------------------------------------------------------

@@ -28,6 +28,7 @@ export interface MatchRow {
   winner_id: string | null;
   score: string | null;
   status: MatchStatus;
+  scheduled_at?: string | null;
   started_at?: string | null;
   completed_at?: string | null;
   updated_at?: string | null;
@@ -57,6 +58,7 @@ export function rowToMatch(row: MatchRow): Match {
     winnerId: row.winner_id,
     score: row.score,
     status: row.status,
+    scheduledAt: row.scheduled_at ?? null,
   };
 }
 
@@ -74,6 +76,7 @@ export function matchToRow(match: Match): MatchRow {
     winner_id: match.winnerId,
     score: match.score,
     status: match.status,
+    scheduled_at: match.scheduledAt,
   };
 }
 
@@ -108,6 +111,7 @@ function matchesEqual(a: Match, b: Match): boolean {
     a.player2Id === b.player2Id &&
     a.winnerId === b.winnerId &&
     a.score === b.score &&
-    a.status === b.status
+    a.status === b.status &&
+    a.scheduledAt === b.scheduledAt
   );
 }

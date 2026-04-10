@@ -21,6 +21,13 @@ export interface Match {
   winnerId: string | null;
   score: string | null; // e.g. '2-1' for BO3
   status: MatchStatus;
+  /**
+   * Planned start time for this match (ISO 8601 string in UTC).
+   * When set and reached, the bracket UI auto-flips the card to "LIVE"
+   * (unless the match is already completed). The admin can also manually
+   * override the status to 'live' via the editor.
+   */
+  scheduledAt: string | null;
 }
 
 export interface Prediction {

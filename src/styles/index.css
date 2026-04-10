@@ -300,10 +300,21 @@
       0 0 0 1px var(--c-gold) inset,
       0 0 24px var(--c-gold-glow),
       0 6px 18px rgba(0, 0, 0, 0.6);
+    animation: live-card-pulse 1.8s ease-in-out infinite;
+    z-index: 2;
   }
   .match-card.is-live::before,
   .match-card.is-live::after {
     opacity: 1;
+  }
+  /* Make the LIVE meta badge stand out a bit more on a live card */
+  .match-card.is-live .match-meta {
+    background: linear-gradient(180deg, #2a2310 0%, #1a1408 100%);
+    border-bottom-color: rgba(240, 185, 11, 0.55);
+  }
+  .match-card.is-live .match-meta__live {
+    color: var(--c-gold-light);
+    text-shadow: 0 0 8px var(--c-gold-glow);
   }
 
   .match-card.is-grand-final {
@@ -546,6 +557,24 @@
   }
   50% {
     box-shadow: 0 0 10px var(--c-gold-light), 0 0 0 4px rgba(240, 185, 11, 0);
+  }
+}
+
+/* Outer glow that breathes around a live match card */
+@keyframes live-card-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px var(--c-gold) inset,
+      0 0 18px rgba(240, 185, 11, 0.30),
+      0 0 0 0 rgba(240, 185, 11, 0.45),
+      0 6px 18px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px var(--c-gold-light) inset,
+      0 0 32px rgba(240, 185, 11, 0.55),
+      0 0 0 6px rgba(240, 185, 11, 0),
+      0 6px 18px rgba(0, 0, 0, 0.6);
   }
 }
 

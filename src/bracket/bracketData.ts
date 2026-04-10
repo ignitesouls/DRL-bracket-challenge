@@ -167,6 +167,7 @@ function blankMatch(
     winnerId: null,
     score: null,
     status: 'pending',
+    scheduledAt: null,
   };
 }
 

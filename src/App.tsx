@@ -28,7 +28,9 @@ export default function App() {
   const predictions = usePredictions({
     userId: user?.id ?? null,
     players: bracket.players,
-    liveMatches: bracket.matches,
+    // Use the auto-live overlay so matches whose scheduled start has arrived
+    // also lock predictions, not just admin-toggled live matches.
+    liveMatches: bracket.displayMatches,
   });
 
   const [view, setView] = useState<View>('live');
@@ -244,7 +246,7 @@ export default function App() {
           >
             {view === 'live' ? (
               <BracketCanvas
-                matches={bracket.matches}
+                matches={bracket.displayMatches}
                 playerById={bracket.playerById}
                 onAdminEdit={isAdmin ? setEditingMatchId : undefined}
               />
@@ -281,6 +283,7 @@ export default function App() {
           onSave={bracket.setMatchWinner}
           onClear={bracket.clearMatch}
           onSetStatus={bracket.setMatchStatus}
+          onSetSchedule={bracket.setMatchSchedule}
         />
       )}
     </div>

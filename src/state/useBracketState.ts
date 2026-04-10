@@ -29,7 +29,15 @@ export interface BracketState {
   mode: BracketMode;
   errorMessage: string | null;
   players: Player[];
+  /** Raw matches from the DB. The admin UI uses this. */
   matches: Match[];
+  /**
+   * Matches with the auto-live overlay applied: any match whose
+   * `scheduledAt` is in the past, that has both players and no winner yet,
+   * gets its `status` flipped to 'live' for display purposes. The bracket
+   * canvas and the predictions hook both consume this.
+   */
+  displayMatches: Match[];
   playerById: Map<string, Player>;
 }
 
@@ -40,6 +48,12 @@ export interface AdminActions {
   clearMatch: (matchId: string) => Promise<void>;
   /** Toggle a match's lifecycle status (pending / live / completed). */
   setMatchStatus: (matchId: string, status: MatchStatus) => Promise<void>;
+  /**
+   * Set (or clear) a match's scheduled start time. Pass an ISO string in UTC,
+   * or null to clear the schedule. Once `now >= scheduledAt`, the bracket UI
+   * auto-flips the card to LIVE without needing the admin to intervene.
+   */
+  setMatchSchedule: (matchId: string, scheduledAt: string | null) => Promise<void>;
   /** Insert the placeholder roster into the players table. */
   seedPlayers: () => Promise<void>;
   /** Build all 46 matches from the current player roster and upsert. */
@@ -89,6 +103,38 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
     () => new Map(players.map((p) => [p.id, p])),
     [players]
   );
+
+  // Coarse "now" tick (every 30s) to drive the auto-live overlay below.
+  // 30s is plenty — match start times are minute-granular and we don't want
+  // to thrash the whole bracket on every render.
+  const [now, setNow] = useState<number>(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 30_000);
+    const onVis = () => {
+      if (document.visibilityState === 'visible') setNow(Date.now());
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+  }, []);
+
+  // Auto-live overlay. A match is shown LIVE if either:
+  //   - admin has explicitly set status='live', OR
+  //   - it has a scheduled start time that's already passed AND it has both
+  //     players AND no winner has been recorded yet.
+  // Completed matches are never re-flipped to live.
+  const displayMatches = useMemo(() => {
+    return matches.map((m) => {
+      if (m.status === 'completed' || m.status === 'live') return m;
+      if (!m.scheduledAt) return m;
+      if (!m.player1Id || !m.player2Id) return m;
+      const startMs = Date.parse(m.scheduledAt);
+      if (Number.isNaN(startMs) || startMs > now) return m;
+      return { ...m, status: 'live' as MatchStatus };
+    });
+  }, [matches, now]);
 
   // -------------------------------------------------------------------------
   // Initial fetch + realtime subscription
@@ -272,6 +318,17 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
     [isAdmin, applyAndSync]
   );
 
+  const setMatchSchedule = useCallback(
+    async (matchId: string, scheduledAt: string | null) => {
+      if (!isAdmin && isSupabaseConfigured) return;
+      const next = matchesRef.current.map((m) =>
+        m.id === matchId ? { ...m, scheduledAt } : m
+      );
+      await applyAndSync(next);
+    },
+    [isAdmin, applyAndSync]
+  );
+
   const seedPlayers = useCallback(async () => {
     if (busyRef.current) return;
     if (!isSupabaseConfigured) {
@@ -355,10 +412,12 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
     errorMessage,
     players,
     matches,
+    displayMatches,
     playerById,
     setMatchWinner,
     clearMatch,
     setMatchStatus,
+    setMatchSchedule,
     seedPlayers,
     initializeBracket,
     resetBracket,
