@@ -978,7 +978,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 14px 8px 12px;
   background: transparent;
   border: 0;
   text-align: left;
@@ -986,6 +986,7 @@
   user-select: none;
   transition: background 0.1s;
   color: var(--c-text);
+  box-sizing: border-box;
 }
 
 .pcard:hover .pcard__head {
@@ -1097,11 +1098,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 3px;
   color: var(--c-twitch);
   flex-shrink: 0;
+  margin-right: 2px;
   transition: background 0.15s;
 }
 
