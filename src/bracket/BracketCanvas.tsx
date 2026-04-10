@@ -118,6 +118,7 @@ export function BracketCanvas({
             strokeWidth={1.5}
             strokeLinecap="square"
             strokeLinejoin="miter"
+            pathLength={1}
             className="bracket-connector"
             style={{ animationDelay: `${300 + i * 14}ms` }}
           />

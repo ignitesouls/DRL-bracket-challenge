@@ -149,10 +149,11 @@ export function computeLayout(): BracketLayout {
   const losersBottom = losersCardsTop + 8 * ROW_PITCH - (ROW_PITCH - CARD_H);
 
   // ----- Grand Final -----
-  // Vertically centered between W15 and L30, at the rightmost column
-  const w15 = positions.get('W15')!;
-  const l30 = positions.get('L30')!;
-  const gfY = (w15.y + l30.y + CARD_H - GF_CARD_H) / 2;
+  // Centered on the gold section divider (the midpoint between the bottom
+  // of the winners section and the top of the losers section), so the GF
+  // card visually sits ON the divider bar instead of drifting off it.
+  const dividerMidY = (winnersBottom + losersHeaderY) / 2;
+  const gfY = dividerMidY - GF_CARD_H / 2;
   const grandFinal: MatchPosition = {
     matchId: 'GF',
     x: colX(GF_COL),
