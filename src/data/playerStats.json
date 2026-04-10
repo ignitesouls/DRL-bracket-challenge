@@ -963,53 +963,1493 @@
     }
   ],
   "pairwise": {
-    "HooZher__rambler_ing": {
-      "p1Win": 0.7707
+    "AzaZ_ow__Dagann_e": {
+      "p1Win": 0.7645
     },
-    "EnsgMaster__Forsa": {
-      "p1Win": 0.6393
+    "AzaZ_ow__EnsgMaster": {
+      "p1Win": 0.7133
     },
-    "Kayjuro___poleuky": {
-      "p1Win": 0.4828
+    "AzaZ_ow__Forsa": {
+      "p1Win": 0.4925
+    },
+    "AzaZ_ow__GustafGabel": {
+      "p1Win": 0.565
+    },
+    "AzaZ_ow__HooZher": {
+      "p1Win": 0.3642
+    },
+    "AzaZ_ow__Kayjuro_": {
+      "p1Win": 0.442
+    },
+    "AzaZ_ow__LazyHelios": {
+      "p1Win": 0.3997
+    },
+    "AzaZ_ow__LilAggy": {
+      "p1Win": 0.6392
+    },
+    "AzaZ_ow__Mokyx": {
+      "p1Win": 0.7914
+    },
+    "AzaZ_ow__Niorra": {
+      "p1Win": 0.4921
+    },
+    "AzaZ_ow__NuclearPastaTom": {
+      "p1Win": 0.4622
+    },
+    "AzaZ_ow__Owarida": {
+      "p1Win": 0.801
     },
     "AzaZ_ow__Pluryl": {
-      "p1Win": 0.4106
+      "p1Win": 0.4214
     },
-    "GustafGabel__Rakushain_": {
-      "p1Win": 0.557
+    "AzaZ_ow__Rakushain_": {
+      "p1Win": 0.6219
     },
-    "Niorra__RomainJacques_": {
-      "p1Win": 0.5676
+    "AzaZ_ow__RannisConsortBryan": {
+      "p1Win": 0.8215
     },
-    "LazyHelios__psiphicode": {
-      "p1Win": 0.596
+    "AzaZ_ow__RomainJacques_": {
+      "p1Win": 0.5257
     },
-    "ironyeu__jeffqed": {
-      "p1Win": 0.5196
+    "AzaZ_ow__SeriousChallenges": {
+      "p1Win": 0.4906
+    },
+    "AzaZ_ow__Teddy59C": {
+      "p1Win": 0.7087
+    },
+    "AzaZ_ow__Typin__": {
+      "p1Win": 0.7382
+    },
+    "AzaZ_ow__Unlucked_Destro": {
+      "p1Win": 0.7964
+    },
+    "AzaZ_ow__az_gar25": {
+      "p1Win": 0.7471
+    },
+    "AzaZ_ow__consta_sama": {
+      "p1Win": 0.6238
+    },
+    "AzaZ_ow__ironyeu": {
+      "p1Win": 0.3916
+    },
+    "AzaZ_ow__jeffqed": {
+      "p1Win": 0.488
+    },
+    "AzaZ_ow__mr_dr_raven": {
+      "p1Win": 0.705
+    },
+    "AzaZ_ow__pirl_fresh": {
+      "p1Win": 0.6482
+    },
+    "AzaZ_ow__poleuky": {
+      "p1Win": 0.5059
+    },
+    "AzaZ_ow__psiphicode": {
+      "p1Win": 0.5218
+    },
+    "AzaZ_ow__rambler_ing": {
+      "p1Win": 0.6741
+    },
+    "AzaZ_ow__theMixed_": {
+      "p1Win": 0.7844
+    },
+    "AzaZ_ow__wander652": {
+      "p1Win": 0.6097
+    },
+    "Dagann_e__EnsgMaster": {
+      "p1Win": 0.2938
+    },
+    "Dagann_e__Forsa": {
+      "p1Win": 0.2624
+    },
+    "Dagann_e__GustafGabel": {
+      "p1Win": 0.344
+    },
+    "Dagann_e__HooZher": {
+      "p1Win": 0.1208
+    },
+    "Dagann_e__Kayjuro_": {
+      "p1Win": 0.2498
+    },
+    "Dagann_e__LazyHelios": {
+      "p1Win": 0.1973
+    },
+    "Dagann_e__LilAggy": {
+      "p1Win": 0.3798
+    },
+    "Dagann_e__Mokyx": {
+      "p1Win": 0.3244
+    },
+    "Dagann_e__Niorra": {
+      "p1Win": 0.2569
+    },
+    "Dagann_e__NuclearPastaTom": {
+      "p1Win": 0.2857
+    },
+    "Dagann_e__Owarida": {
+      "p1Win": 0.4405
+    },
+    "Dagann_e__Pluryl": {
+      "p1Win": 0.3292
+    },
+    "Dagann_e__Rakushain_": {
+      "p1Win": 0.2995
+    },
+    "Dagann_e__RannisConsortBryan": {
+      "p1Win": 0.5983
+    },
+    "Dagann_e__RomainJacques_": {
+      "p1Win": 0.2764
+    },
+    "Dagann_e__SeriousChallenges": {
+      "p1Win": 0.2474
+    },
+    "Dagann_e__Teddy59C": {
+      "p1Win": 0.4619
+    },
+    "Dagann_e__Typin__": {
+      "p1Win": 0.327
+    },
+    "Dagann_e__Unlucked_Destro": {
+      "p1Win": 0.5428
+    },
+    "Dagann_e__az_gar25": {
+      "p1Win": 0.4978
+    },
+    "Dagann_e__consta_sama": {
+      "p1Win": 0.4058
+    },
+    "Dagann_e__ironyeu": {
+      "p1Win": 0.2028
+    },
+    "Dagann_e__jeffqed": {
+      "p1Win": 0.2685
+    },
+    "Dagann_e__mr_dr_raven": {
+      "p1Win": 0.4419
     },
     "Dagann_e__pirl_fresh": {
-      "p1Win": 0.403
+      "p1Win": 0.4023
     },
-    "NuclearPastaTom__az_gar25": {
-      "p1Win": 0.5988
+    "Dagann_e__poleuky": {
+      "p1Win": 0.3509
     },
-    "Teddy59C__Typin__": {
-      "p1Win": 0.5462
+    "Dagann_e__psiphicode": {
+      "p1Win": 0.2749
     },
-    "consta_sama__theMixed_": {
-      "p1Win": 0.5955
+    "Dagann_e__rambler_ing": {
+      "p1Win": 0.4386
+    },
+    "Dagann_e__theMixed_": {
+      "p1Win": 0.3934
+    },
+    "Dagann_e__wander652": {
+      "p1Win": 0.4143
+    },
+    "EnsgMaster__Forsa": {
+      "p1Win": 0.6425
+    },
+    "EnsgMaster__GustafGabel": {
+      "p1Win": 0.4353
+    },
+    "EnsgMaster__HooZher": {
+      "p1Win": 0.2997
+    },
+    "EnsgMaster__Kayjuro_": {
+      "p1Win": 0.4319
+    },
+    "EnsgMaster__LazyHelios": {
+      "p1Win": 0.3718
+    },
+    "EnsgMaster__LilAggy": {
+      "p1Win": 0.5121
+    },
+    "EnsgMaster__Mokyx": {
+      "p1Win": 0.5871
+    },
+    "EnsgMaster__Niorra": {
+      "p1Win": 0.3196
+    },
+    "EnsgMaster__NuclearPastaTom": {
+      "p1Win": 0.3456
+    },
+    "EnsgMaster__Owarida": {
+      "p1Win": 0.6533
+    },
+    "EnsgMaster__Pluryl": {
+      "p1Win": 0.3942
+    },
+    "EnsgMaster__Rakushain_": {
+      "p1Win": 0.3711
+    },
+    "EnsgMaster__RannisConsortBryan": {
+      "p1Win": 0.6415
+    },
+    "EnsgMaster__RomainJacques_": {
+      "p1Win": 0.3904
+    },
+    "EnsgMaster__SeriousChallenges": {
+      "p1Win": 0.5125
+    },
+    "EnsgMaster__Teddy59C": {
+      "p1Win": 0.586
+    },
+    "EnsgMaster__Typin__": {
+      "p1Win": 0.6602
+    },
+    "EnsgMaster__Unlucked_Destro": {
+      "p1Win": 0.6467
+    },
+    "EnsgMaster__az_gar25": {
+      "p1Win": 0.627
+    },
+    "EnsgMaster__consta_sama": {
+      "p1Win": 0.6886
+    },
+    "EnsgMaster__ironyeu": {
+      "p1Win": 0.339
+    },
+    "EnsgMaster__jeffqed": {
+      "p1Win": 0.3989
+    },
+    "EnsgMaster__mr_dr_raven": {
+      "p1Win": 0.606
+    },
+    "EnsgMaster__pirl_fresh": {
+      "p1Win": 0.4889
+    },
+    "EnsgMaster__poleuky": {
+      "p1Win": 0.4199
+    },
+    "EnsgMaster__psiphicode": {
+      "p1Win": 0.477
+    },
+    "EnsgMaster__rambler_ing": {
+      "p1Win": 0.5106
+    },
+    "EnsgMaster__theMixed_": {
+      "p1Win": 0.6784
+    },
+    "EnsgMaster__wander652": {
+      "p1Win": 0.5242
+    },
+    "Forsa__GustafGabel": {
+      "p1Win": 0.5057
+    },
+    "Forsa__HooZher": {
+      "p1Win": 0.2934
+    },
+    "Forsa__Kayjuro_": {
+      "p1Win": 0.4872
+    },
+    "Forsa__LazyHelios": {
+      "p1Win": 0.4459
+    },
+    "Forsa__LilAggy": {
+      "p1Win": 0.6336
+    },
+    "Forsa__Mokyx": {
+      "p1Win": 0.4814
+    },
+    "Forsa__Niorra": {
+      "p1Win": 0.4881
+    },
+    "Forsa__NuclearPastaTom": {
+      "p1Win": 0.438
+    },
+    "Forsa__Owarida": {
+      "p1Win": 0.6807
+    },
+    "Forsa__Pluryl": {
+      "p1Win": 0.4083
+    },
+    "Forsa__Rakushain_": {
+      "p1Win": 0.5832
+    },
+    "Forsa__RannisConsortBryan": {
+      "p1Win": 0.5748
+    },
+    "Forsa__RomainJacques_": {
+      "p1Win": 0.3715
+    },
+    "Forsa__SeriousChallenges": {
+      "p1Win": 0.4232
+    },
+    "Forsa__Teddy59C": {
+      "p1Win": 0.4819
+    },
+    "Forsa__Typin__": {
+      "p1Win": 0.6001
+    },
+    "Forsa__Unlucked_Destro": {
+      "p1Win": 0.667
+    },
+    "Forsa__az_gar25": {
+      "p1Win": 0.714
+    },
+    "Forsa__consta_sama": {
+      "p1Win": 0.5405
+    },
+    "Forsa__ironyeu": {
+      "p1Win": 0.3289
+    },
+    "Forsa__jeffqed": {
+      "p1Win": 0.4016
+    },
+    "Forsa__mr_dr_raven": {
+      "p1Win": 0.6664
+    },
+    "Forsa__pirl_fresh": {
+      "p1Win": 0.637
+    },
+    "Forsa__poleuky": {
+      "p1Win": 0.5919
+    },
+    "Forsa__psiphicode": {
+      "p1Win": 0.52
+    },
+    "Forsa__rambler_ing": {
+      "p1Win": 0.6325
+    },
+    "Forsa__theMixed_": {
+      "p1Win": 0.5764
+    },
+    "Forsa__wander652": {
+      "p1Win": 0.5698
+    },
+    "GustafGabel__HooZher": {
+      "p1Win": 0.2648
+    },
+    "GustafGabel__Kayjuro_": {
+      "p1Win": 0.4766
+    },
+    "GustafGabel__LazyHelios": {
+      "p1Win": 0.3998
+    },
+    "GustafGabel__LilAggy": {
+      "p1Win": 0.5455
+    },
+    "GustafGabel__Mokyx": {
+      "p1Win": 0.4829
+    },
+    "GustafGabel__Niorra": {
+      "p1Win": 0.4173
+    },
+    "GustafGabel__NuclearPastaTom": {
+      "p1Win": 0.3634
+    },
+    "GustafGabel__Owarida": {
+      "p1Win": 0.6496
+    },
+    "GustafGabel__Pluryl": {
+      "p1Win": 0.4482
+    },
+    "GustafGabel__Rakushain_": {
+      "p1Win": 0.5501
+    },
+    "GustafGabel__RannisConsortBryan": {
+      "p1Win": 0.6382
+    },
+    "GustafGabel__RomainJacques_": {
+      "p1Win": 0.4491
+    },
+    "GustafGabel__SeriousChallenges": {
+      "p1Win": 0.4767
+    },
+    "GustafGabel__Teddy59C": {
+      "p1Win": 0.602
+    },
+    "GustafGabel__Typin__": {
+      "p1Win": 0.615
+    },
+    "GustafGabel__Unlucked_Destro": {
+      "p1Win": 0.6331
+    },
+    "GustafGabel__az_gar25": {
+      "p1Win": 0.5878
+    },
+    "GustafGabel__consta_sama": {
+      "p1Win": 0.509
+    },
+    "GustafGabel__ironyeu": {
+      "p1Win": 0.2643
+    },
+    "GustafGabel__jeffqed": {
+      "p1Win": 0.4259
+    },
+    "GustafGabel__mr_dr_raven": {
+      "p1Win": 0.5713
+    },
+    "GustafGabel__pirl_fresh": {
+      "p1Win": 0.6062
+    },
+    "GustafGabel__poleuky": {
+      "p1Win": 0.5072
+    },
+    "GustafGabel__psiphicode": {
+      "p1Win": 0.4698
+    },
+    "GustafGabel__rambler_ing": {
+      "p1Win": 0.5347
+    },
+    "GustafGabel__theMixed_": {
+      "p1Win": 0.6452
+    },
+    "GustafGabel__wander652": {
+      "p1Win": 0.5544
+    },
+    "HooZher__Kayjuro_": {
+      "p1Win": 0.6345
+    },
+    "HooZher__LazyHelios": {
+      "p1Win": 0.5456
+    },
+    "HooZher__LilAggy": {
+      "p1Win": 0.8154
+    },
+    "HooZher__Mokyx": {
+      "p1Win": 0.7528
+    },
+    "HooZher__Niorra": {
+      "p1Win": 0.5805
+    },
+    "HooZher__NuclearPastaTom": {
+      "p1Win": 0.5876
+    },
+    "HooZher__Owarida": {
+      "p1Win": 0.866
+    },
+    "HooZher__Pluryl": {
+      "p1Win": 0.6509
+    },
+    "HooZher__Rakushain_": {
+      "p1Win": 0.5722
+    },
+    "HooZher__RannisConsortBryan": {
+      "p1Win": 0.8175
+    },
+    "HooZher__RomainJacques_": {
+      "p1Win": 0.6318
+    },
+    "HooZher__SeriousChallenges": {
+      "p1Win": 0.6819
+    },
+    "HooZher__Teddy59C": {
+      "p1Win": 0.7823
+    },
+    "HooZher__Typin__": {
+      "p1Win": 0.8304
+    },
+    "HooZher__Unlucked_Destro": {
+      "p1Win": 0.883
+    },
+    "HooZher__az_gar25": {
+      "p1Win": 0.778
+    },
+    "HooZher__consta_sama": {
+      "p1Win": 0.7854
+    },
+    "HooZher__ironyeu": {
+      "p1Win": 0.4868
+    },
+    "HooZher__jeffqed": {
+      "p1Win": 0.637
+    },
+    "HooZher__mr_dr_raven": {
+      "p1Win": 0.8267
+    },
+    "HooZher__pirl_fresh": {
+      "p1Win": 0.7701
+    },
+    "HooZher__poleuky": {
+      "p1Win": 0.6885
+    },
+    "HooZher__psiphicode": {
+      "p1Win": 0.7068
+    },
+    "HooZher__rambler_ing": {
+      "p1Win": 0.7665
+    },
+    "HooZher__theMixed_": {
+      "p1Win": 0.8126
+    },
+    "HooZher__wander652": {
+      "p1Win": 0.7991
+    },
+    "Kayjuro___LazyHelios": {
+      "p1Win": 0.4701
+    },
+    "Kayjuro___LilAggy": {
+      "p1Win": 0.6885
+    },
+    "Kayjuro___Mokyx": {
+      "p1Win": 0.6342
+    },
+    "Kayjuro___Niorra": {
+      "p1Win": 0.4677
+    },
+    "Kayjuro___NuclearPastaTom": {
+      "p1Win": 0.4627
+    },
+    "Kayjuro___Owarida": {
+      "p1Win": 0.7823
+    },
+    "Kayjuro___Pluryl": {
+      "p1Win": 0.4601
+    },
+    "Kayjuro___Rakushain_": {
+      "p1Win": 0.4248
+    },
+    "Kayjuro___RannisConsortBryan": {
+      "p1Win": 0.7406
+    },
+    "Kayjuro___RomainJacques_": {
+      "p1Win": 0.4927
+    },
+    "Kayjuro___SeriousChallenges": {
+      "p1Win": 0.4778
+    },
+    "Kayjuro___Teddy59C": {
+      "p1Win": 0.6495
+    },
+    "Kayjuro___Typin__": {
+      "p1Win": 0.716
+    },
+    "Kayjuro___Unlucked_Destro": {
+      "p1Win": 0.7944
+    },
+    "Kayjuro___az_gar25": {
+      "p1Win": 0.6835
+    },
+    "Kayjuro___consta_sama": {
+      "p1Win": 0.5859
+    },
+    "Kayjuro___ironyeu": {
+      "p1Win": 0.4257
+    },
+    "Kayjuro___jeffqed": {
+      "p1Win": 0.4226
+    },
+    "Kayjuro___mr_dr_raven": {
+      "p1Win": 0.6908
+    },
+    "Kayjuro___pirl_fresh": {
+      "p1Win": 0.6252
+    },
+    "Kayjuro___poleuky": {
+      "p1Win": 0.4714
+    },
+    "Kayjuro___psiphicode": {
+      "p1Win": 0.4725
+    },
+    "Kayjuro___rambler_ing": {
+      "p1Win": 0.5784
+    },
+    "Kayjuro___theMixed_": {
+      "p1Win": 0.7094
+    },
+    "Kayjuro___wander652": {
+      "p1Win": 0.6342
+    },
+    "LazyHelios__LilAggy": {
+      "p1Win": 0.7386
+    },
+    "LazyHelios__Mokyx": {
+      "p1Win": 0.6071
+    },
+    "LazyHelios__Niorra": {
+      "p1Win": 0.573
+    },
+    "LazyHelios__NuclearPastaTom": {
+      "p1Win": 0.5411
+    },
+    "LazyHelios__Owarida": {
+      "p1Win": 0.7913
+    },
+    "LazyHelios__Pluryl": {
+      "p1Win": 0.4677
+    },
+    "LazyHelios__Rakushain_": {
+      "p1Win": 0.6716
+    },
+    "LazyHelios__RannisConsortBryan": {
+      "p1Win": 0.7359
+    },
+    "LazyHelios__RomainJacques_": {
+      "p1Win": 0.5362
+    },
+    "LazyHelios__SeriousChallenges": {
+      "p1Win": 0.5959
+    },
+    "LazyHelios__Teddy59C": {
+      "p1Win": 0.6641
+    },
+    "LazyHelios__Typin__": {
+      "p1Win": 0.714
+    },
+    "LazyHelios__Unlucked_Destro": {
+      "p1Win": 0.7923
+    },
+    "LazyHelios__az_gar25": {
+      "p1Win": 0.7364
+    },
+    "LazyHelios__consta_sama": {
+      "p1Win": 0.585
+    },
+    "LazyHelios__ironyeu": {
+      "p1Win": 0.477
+    },
+    "LazyHelios__jeffqed": {
+      "p1Win": 0.5128
+    },
+    "LazyHelios__mr_dr_raven": {
+      "p1Win": 0.682
+    },
+    "LazyHelios__pirl_fresh": {
+      "p1Win": 0.6913
+    },
+    "LazyHelios__poleuky": {
+      "p1Win": 0.592
+    },
+    "LazyHelios__psiphicode": {
+      "p1Win": 0.5954
+    },
+    "LazyHelios__rambler_ing": {
+      "p1Win": 0.7326
+    },
+    "LazyHelios__theMixed_": {
+      "p1Win": 0.7298
+    },
+    "LazyHelios__wander652": {
+      "p1Win": 0.6417
+    },
+    "LilAggy__Mokyx": {
+      "p1Win": 0.4817
+    },
+    "LilAggy__Niorra": {
+      "p1Win": 0.336
+    },
+    "LilAggy__NuclearPastaTom": {
+      "p1Win": 0.3876
+    },
+    "LilAggy__Owarida": {
+      "p1Win": 0.5888
+    },
+    "LilAggy__Pluryl": {
+      "p1Win": 0.2436
+    },
+    "LilAggy__Rakushain_": {
+      "p1Win": 0.5416
+    },
+    "LilAggy__RannisConsortBryan": {
+      "p1Win": 0.7402
+    },
+    "LilAggy__RomainJacques_": {
+      "p1Win": 0.4267
+    },
+    "LilAggy__SeriousChallenges": {
+      "p1Win": 0.4498
+    },
+    "LilAggy__Teddy59C": {
+      "p1Win": 0.6703
+    },
+    "LilAggy__Typin__": {
+      "p1Win": 0.4459
     },
     "LilAggy__Unlucked_Destro": {
-      "p1Win": 0.5727
+      "p1Win": 0.5661
     },
-    "Owarida__wander652": {
-      "p1Win": 0.374
+    "LilAggy__az_gar25": {
+      "p1Win": 0.5514
+    },
+    "LilAggy__consta_sama": {
+      "p1Win": 0.4639
+    },
+    "LilAggy__ironyeu": {
+      "p1Win": 0.2155
+    },
+    "LilAggy__jeffqed": {
+      "p1Win": 0.3869
+    },
+    "LilAggy__mr_dr_raven": {
+      "p1Win": 0.5613
+    },
+    "LilAggy__pirl_fresh": {
+      "p1Win": 0.5715
+    },
+    "LilAggy__poleuky": {
+      "p1Win": 0.4619
+    },
+    "LilAggy__psiphicode": {
+      "p1Win": 0.3964
+    },
+    "LilAggy__rambler_ing": {
+      "p1Win": 0.5039
+    },
+    "LilAggy__theMixed_": {
+      "p1Win": 0.5853
+    },
+    "LilAggy__wander652": {
+      "p1Win": 0.4803
+    },
+    "Mokyx__Niorra": {
+      "p1Win": 0.3907
+    },
+    "Mokyx__NuclearPastaTom": {
+      "p1Win": 0.353
+    },
+    "Mokyx__Owarida": {
+      "p1Win": 0.6231
+    },
+    "Mokyx__Pluryl": {
+      "p1Win": 0.4532
+    },
+    "Mokyx__Rakushain_": {
+      "p1Win": 0.4377
+    },
+    "Mokyx__RannisConsortBryan": {
+      "p1Win": 0.5851
+    },
+    "Mokyx__RomainJacques_": {
+      "p1Win": 0.3554
+    },
+    "Mokyx__SeriousChallenges": {
+      "p1Win": 0.5642
+    },
+    "Mokyx__Teddy59C": {
+      "p1Win": 0.6037
+    },
+    "Mokyx__Typin__": {
+      "p1Win": 0.5279
+    },
+    "Mokyx__Unlucked_Destro": {
+      "p1Win": 0.6469
+    },
+    "Mokyx__az_gar25": {
+      "p1Win": 0.5516
+    },
+    "Mokyx__consta_sama": {
+      "p1Win": 0.4758
+    },
+    "Mokyx__ironyeu": {
+      "p1Win": 0.3317
+    },
+    "Mokyx__jeffqed": {
+      "p1Win": 0.4225
     },
     "Mokyx__mr_dr_raven": {
-      "p1Win": 0.5615
+      "p1Win": 0.5785
+    },
+    "Mokyx__pirl_fresh": {
+      "p1Win": 0.5112
+    },
+    "Mokyx__poleuky": {
+      "p1Win": 0.4288
+    },
+    "Mokyx__psiphicode": {
+      "p1Win": 0.4553
+    },
+    "Mokyx__rambler_ing": {
+      "p1Win": 0.4503
+    },
+    "Mokyx__theMixed_": {
+      "p1Win": 0.5486
+    },
+    "Mokyx__wander652": {
+      "p1Win": 0.5213
+    },
+    "Niorra__NuclearPastaTom": {
+      "p1Win": 0.467
+    },
+    "Niorra__Owarida": {
+      "p1Win": 0.7584
+    },
+    "Niorra__Pluryl": {
+      "p1Win": 0.4387
+    },
+    "Niorra__Rakushain_": {
+      "p1Win": 0.509
+    },
+    "Niorra__RannisConsortBryan": {
+      "p1Win": 0.7711
+    },
+    "Niorra__RomainJacques_": {
+      "p1Win": 0.5718
+    },
+    "Niorra__SeriousChallenges": {
+      "p1Win": 0.5573
+    },
+    "Niorra__Teddy59C": {
+      "p1Win": 0.7177
+    },
+    "Niorra__Typin__": {
+      "p1Win": 0.6805
+    },
+    "Niorra__Unlucked_Destro": {
+      "p1Win": 0.7591
+    },
+    "Niorra__az_gar25": {
+      "p1Win": 0.7319
+    },
+    "Niorra__consta_sama": {
+      "p1Win": 0.6178
+    },
+    "Niorra__ironyeu": {
+      "p1Win": 0.4749
+    },
+    "Niorra__jeffqed": {
+      "p1Win": 0.5384
+    },
+    "Niorra__mr_dr_raven": {
+      "p1Win": 0.7179
+    },
+    "Niorra__pirl_fresh": {
+      "p1Win": 0.6669
+    },
+    "Niorra__poleuky": {
+      "p1Win": 0.5722
+    },
+    "Niorra__psiphicode": {
+      "p1Win": 0.5787
+    },
+    "Niorra__rambler_ing": {
+      "p1Win": 0.6421
+    },
+    "Niorra__theMixed_": {
+      "p1Win": 0.7318
+    },
+    "Niorra__wander652": {
+      "p1Win": 0.6993
+    },
+    "NuclearPastaTom__Owarida": {
+      "p1Win": 0.7111
+    },
+    "NuclearPastaTom__Pluryl": {
+      "p1Win": 0.5165
+    },
+    "NuclearPastaTom__Rakushain_": {
+      "p1Win": 0.483
+    },
+    "NuclearPastaTom__RannisConsortBryan": {
+      "p1Win": 0.7202
+    },
+    "NuclearPastaTom__RomainJacques_": {
+      "p1Win": 0.5232
+    },
+    "NuclearPastaTom__SeriousChallenges": {
+      "p1Win": 0.6789
+    },
+    "NuclearPastaTom__Teddy59C": {
+      "p1Win": 0.6939
+    },
+    "NuclearPastaTom__Typin__": {
+      "p1Win": 0.69
+    },
+    "NuclearPastaTom__Unlucked_Destro": {
+      "p1Win": 0.7266
+    },
+    "NuclearPastaTom__az_gar25": {
+      "p1Win": 0.6052
+    },
+    "NuclearPastaTom__consta_sama": {
+      "p1Win": 0.7626
+    },
+    "NuclearPastaTom__ironyeu": {
+      "p1Win": 0.4157
+    },
+    "NuclearPastaTom__jeffqed": {
+      "p1Win": 0.4657
+    },
+    "NuclearPastaTom__mr_dr_raven": {
+      "p1Win": 0.6192
+    },
+    "NuclearPastaTom__pirl_fresh": {
+      "p1Win": 0.6279
+    },
+    "NuclearPastaTom__poleuky": {
+      "p1Win": 0.5475
+    },
+    "NuclearPastaTom__psiphicode": {
+      "p1Win": 0.6017
+    },
+    "NuclearPastaTom__rambler_ing": {
+      "p1Win": 0.5843
+    },
+    "NuclearPastaTom__theMixed_": {
+      "p1Win": 0.6551
+    },
+    "NuclearPastaTom__wander652": {
+      "p1Win": 0.6232
+    },
+    "Owarida__Pluryl": {
+      "p1Win": 0.2667
+    },
+    "Owarida__Rakushain_": {
+      "p1Win": 0.2859
+    },
+    "Owarida__RannisConsortBryan": {
+      "p1Win": 0.4
+    },
+    "Owarida__RomainJacques_": {
+      "p1Win": 0.2854
+    },
+    "Owarida__SeriousChallenges": {
+      "p1Win": 0.2725
+    },
+    "Owarida__Teddy59C": {
+      "p1Win": 0.4017
+    },
+    "Owarida__Typin__": {
+      "p1Win": 0.3122
+    },
+    "Owarida__Unlucked_Destro": {
+      "p1Win": 0.4815
+    },
+    "Owarida__az_gar25": {
+      "p1Win": 0.3357
+    },
+    "Owarida__consta_sama": {
+      "p1Win": 0.5378
+    },
+    "Owarida__ironyeu": {
+      "p1Win": 0.2018
+    },
+    "Owarida__jeffqed": {
+      "p1Win": 0.3218
+    },
+    "Owarida__mr_dr_raven": {
+      "p1Win": 0.4539
+    },
+    "Owarida__pirl_fresh": {
+      "p1Win": 0.4024
+    },
+    "Owarida__poleuky": {
+      "p1Win": 0.2529
+    },
+    "Owarida__psiphicode": {
+      "p1Win": 0.2985
+    },
+    "Owarida__rambler_ing": {
+      "p1Win": 0.3118
+    },
+    "Owarida__theMixed_": {
+      "p1Win": 0.4469
+    },
+    "Owarida__wander652": {
+      "p1Win": 0.3713
+    },
+    "Pluryl__Rakushain_": {
+      "p1Win": 0.504
+    },
+    "Pluryl__RannisConsortBryan": {
+      "p1Win": 0.6812
+    },
+    "Pluryl__RomainJacques_": {
+      "p1Win": 0.3267
+    },
+    "Pluryl__SeriousChallenges": {
+      "p1Win": 0.5897
+    },
+    "Pluryl__Teddy59C": {
+      "p1Win": 0.618
+    },
+    "Pluryl__Typin__": {
+      "p1Win": 0.5557
+    },
+    "Pluryl__Unlucked_Destro": {
+      "p1Win": 0.7362
+    },
+    "Pluryl__az_gar25": {
+      "p1Win": 0.5351
+    },
+    "Pluryl__consta_sama": {
+      "p1Win": 0.6205
+    },
+    "Pluryl__ironyeu": {
+      "p1Win": 0.3787
+    },
+    "Pluryl__jeffqed": {
+      "p1Win": 0.4503
+    },
+    "Pluryl__mr_dr_raven": {
+      "p1Win": 0.709
+    },
+    "Pluryl__pirl_fresh": {
+      "p1Win": 0.7105
+    },
+    "Pluryl__poleuky": {
+      "p1Win": 0.6426
+    },
+    "Pluryl__psiphicode": {
+      "p1Win": 0.6352
+    },
+    "Pluryl__rambler_ing": {
+      "p1Win": 0.5994
+    },
+    "Pluryl__theMixed_": {
+      "p1Win": 0.5594
+    },
+    "Pluryl__wander652": {
+      "p1Win": 0.6588
+    },
+    "Rakushain___RannisConsortBryan": {
+      "p1Win": 0.7484
+    },
+    "Rakushain___RomainJacques_": {
+      "p1Win": 0.5258
+    },
+    "Rakushain___SeriousChallenges": {
+      "p1Win": 0.6242
+    },
+    "Rakushain___Teddy59C": {
+      "p1Win": 0.6131
+    },
+    "Rakushain___Typin__": {
+      "p1Win": 0.7259
+    },
+    "Rakushain___Unlucked_Destro": {
+      "p1Win": 0.6819
+    },
+    "Rakushain___az_gar25": {
+      "p1Win": 0.6614
+    },
+    "Rakushain___consta_sama": {
+      "p1Win": 0.4706
+    },
+    "Rakushain___ironyeu": {
+      "p1Win": 0.4855
+    },
+    "Rakushain___jeffqed": {
+      "p1Win": 0.5594
+    },
+    "Rakushain___mr_dr_raven": {
+      "p1Win": 0.6058
+    },
+    "Rakushain___pirl_fresh": {
+      "p1Win": 0.5933
+    },
+    "Rakushain___poleuky": {
+      "p1Win": 0.5678
+    },
+    "Rakushain___psiphicode": {
+      "p1Win": 0.5151
+    },
+    "Rakushain___rambler_ing": {
+      "p1Win": 0.5978
+    },
+    "Rakushain___theMixed_": {
+      "p1Win": 0.7436
+    },
+    "Rakushain___wander652": {
+      "p1Win": 0.5507
+    },
+    "RannisConsortBryan__RomainJacques_": {
+      "p1Win": 0.3314
     },
     "RannisConsortBryan__SeriousChallenges": {
-      "p1Win": 0.3778
+      "p1Win": 0.3775
+    },
+    "RannisConsortBryan__Teddy59C": {
+      "p1Win": 0.5519
+    },
+    "RannisConsortBryan__Typin__": {
+      "p1Win": 0.3994
+    },
+    "RannisConsortBryan__Unlucked_Destro": {
+      "p1Win": 0.4923
+    },
+    "RannisConsortBryan__az_gar25": {
+      "p1Win": 0.4616
+    },
+    "RannisConsortBryan__consta_sama": {
+      "p1Win": 0.5735
+    },
+    "RannisConsortBryan__ironyeu": {
+      "p1Win": 0.2484
+    },
+    "RannisConsortBryan__jeffqed": {
+      "p1Win": 0.3862
+    },
+    "RannisConsortBryan__mr_dr_raven": {
+      "p1Win": 0.5094
+    },
+    "RannisConsortBryan__pirl_fresh": {
+      "p1Win": 0.4607
+    },
+    "RannisConsortBryan__poleuky": {
+      "p1Win": 0.3148
+    },
+    "RannisConsortBryan__psiphicode": {
+      "p1Win": 0.2625
+    },
+    "RannisConsortBryan__rambler_ing": {
+      "p1Win": 0.3008
+    },
+    "RannisConsortBryan__theMixed_": {
+      "p1Win": 0.5128
+    },
+    "RannisConsortBryan__wander652": {
+      "p1Win": 0.4318
+    },
+    "RomainJacques___SeriousChallenges": {
+      "p1Win": 0.5336
+    },
+    "RomainJacques___Teddy59C": {
+      "p1Win": 0.606
+    },
+    "RomainJacques___Typin__": {
+      "p1Win": 0.6583
+    },
+    "RomainJacques___Unlucked_Destro": {
+      "p1Win": 0.7328
+    },
+    "RomainJacques___az_gar25": {
+      "p1Win": 0.6942
+    },
+    "RomainJacques___consta_sama": {
+      "p1Win": 0.6251
+    },
+    "RomainJacques___ironyeu": {
+      "p1Win": 0.3797
+    },
+    "RomainJacques___jeffqed": {
+      "p1Win": 0.5452
+    },
+    "RomainJacques___mr_dr_raven": {
+      "p1Win": 0.726
+    },
+    "RomainJacques___pirl_fresh": {
+      "p1Win": 0.6178
+    },
+    "RomainJacques___poleuky": {
+      "p1Win": 0.5443
+    },
+    "RomainJacques___psiphicode": {
+      "p1Win": 0.6268
+    },
+    "RomainJacques___rambler_ing": {
+      "p1Win": 0.5792
+    },
+    "RomainJacques___theMixed_": {
+      "p1Win": 0.691
+    },
+    "RomainJacques___wander652": {
+      "p1Win": 0.5906
+    },
+    "SeriousChallenges__Teddy59C": {
+      "p1Win": 0.5377
+    },
+    "SeriousChallenges__Typin__": {
+      "p1Win": 0.5799
+    },
+    "SeriousChallenges__Unlucked_Destro": {
+      "p1Win": 0.7056
+    },
+    "SeriousChallenges__az_gar25": {
+      "p1Win": 0.577
+    },
+    "SeriousChallenges__consta_sama": {
+      "p1Win": 0.5954
+    },
+    "SeriousChallenges__ironyeu": {
+      "p1Win": 0.3784
+    },
+    "SeriousChallenges__jeffqed": {
+      "p1Win": 0.5009
+    },
+    "SeriousChallenges__mr_dr_raven": {
+      "p1Win": 0.6594
+    },
+    "SeriousChallenges__pirl_fresh": {
+      "p1Win": 0.6422
+    },
+    "SeriousChallenges__poleuky": {
+      "p1Win": 0.5343
+    },
+    "SeriousChallenges__psiphicode": {
+      "p1Win": 0.4702
+    },
+    "SeriousChallenges__rambler_ing": {
+      "p1Win": 0.6008
+    },
+    "SeriousChallenges__theMixed_": {
+      "p1Win": 0.6116
+    },
+    "SeriousChallenges__wander652": {
+      "p1Win": 0.6254
+    },
+    "Teddy59C__Typin__": {
+      "p1Win": 0.549
+    },
+    "Teddy59C__Unlucked_Destro": {
+      "p1Win": 0.6314
+    },
+    "Teddy59C__az_gar25": {
+      "p1Win": 0.5558
+    },
+    "Teddy59C__consta_sama": {
+      "p1Win": 0.568
+    },
+    "Teddy59C__ironyeu": {
+      "p1Win": 0.2823
+    },
+    "Teddy59C__jeffqed": {
+      "p1Win": 0.3178
+    },
+    "Teddy59C__mr_dr_raven": {
+      "p1Win": 0.5052
+    },
+    "Teddy59C__pirl_fresh": {
+      "p1Win": 0.4976
+    },
+    "Teddy59C__poleuky": {
+      "p1Win": 0.3627
+    },
+    "Teddy59C__psiphicode": {
+      "p1Win": 0.3572
+    },
+    "Teddy59C__rambler_ing": {
+      "p1Win": 0.4356
+    },
+    "Teddy59C__theMixed_": {
+      "p1Win": 0.4336
+    },
+    "Teddy59C__wander652": {
+      "p1Win": 0.4878
+    },
+    "Typin____Unlucked_Destro": {
+      "p1Win": 0.6281
+    },
+    "Typin____az_gar25": {
+      "p1Win": 0.4857
+    },
+    "Typin____consta_sama": {
+      "p1Win": 0.5513
+    },
+    "Typin____ironyeu": {
+      "p1Win": 0.1915
+    },
+    "Typin____jeffqed": {
+      "p1Win": 0.3142
+    },
+    "Typin____mr_dr_raven": {
+      "p1Win": 0.5189
+    },
+    "Typin____pirl_fresh": {
+      "p1Win": 0.5037
+    },
+    "Typin____poleuky": {
+      "p1Win": 0.3621
+    },
+    "Typin____psiphicode": {
+      "p1Win": 0.3877
+    },
+    "Typin____rambler_ing": {
+      "p1Win": 0.4991
+    },
+    "Typin____theMixed_": {
+      "p1Win": 0.5184
+    },
+    "Typin____wander652": {
+      "p1Win": 0.4602
+    },
+    "Unlucked_Destro__az_gar25": {
+      "p1Win": 0.4877
+    },
+    "Unlucked_Destro__consta_sama": {
+      "p1Win": 0.3315
+    },
+    "Unlucked_Destro__ironyeu": {
+      "p1Win": 0.1743
+    },
+    "Unlucked_Destro__jeffqed": {
+      "p1Win": 0.2528
+    },
+    "Unlucked_Destro__mr_dr_raven": {
+      "p1Win": 0.465
+    },
+    "Unlucked_Destro__pirl_fresh": {
+      "p1Win": 0.4027
+    },
+    "Unlucked_Destro__poleuky": {
+      "p1Win": 0.3308
+    },
+    "Unlucked_Destro__psiphicode": {
+      "p1Win": 0.2842
+    },
+    "Unlucked_Destro__rambler_ing": {
+      "p1Win": 0.4204
+    },
+    "Unlucked_Destro__theMixed_": {
+      "p1Win": 0.4377
+    },
+    "Unlucked_Destro__wander652": {
+      "p1Win": 0.3943
+    },
+    "az_gar25__consta_sama": {
+      "p1Win": 0.3856
+    },
+    "az_gar25__ironyeu": {
+      "p1Win": 0.2902
+    },
+    "az_gar25__jeffqed": {
+      "p1Win": 0.4167
+    },
+    "az_gar25__mr_dr_raven": {
+      "p1Win": 0.4751
+    },
+    "az_gar25__pirl_fresh": {
+      "p1Win": 0.4989
+    },
+    "az_gar25__poleuky": {
+      "p1Win": 0.3709
+    },
+    "az_gar25__psiphicode": {
+      "p1Win": 0.3206
+    },
+    "az_gar25__rambler_ing": {
+      "p1Win": 0.4829
+    },
+    "az_gar25__theMixed_": {
+      "p1Win": 0.5245
+    },
+    "az_gar25__wander652": {
+      "p1Win": 0.4846
+    },
+    "consta_sama__ironyeu": {
+      "p1Win": 0.2106
+    },
+    "consta_sama__jeffqed": {
+      "p1Win": 0.353
+    },
+    "consta_sama__mr_dr_raven": {
+      "p1Win": 0.6197
+    },
+    "consta_sama__pirl_fresh": {
+      "p1Win": 0.5565
+    },
+    "consta_sama__poleuky": {
+      "p1Win": 0.5002
+    },
+    "consta_sama__psiphicode": {
+      "p1Win": 0.4489
+    },
+    "consta_sama__rambler_ing": {
+      "p1Win": 0.5528
+    },
+    "consta_sama__theMixed_": {
+      "p1Win": 0.591
+    },
+    "consta_sama__wander652": {
+      "p1Win": 0.5656
+    },
+    "ironyeu__jeffqed": {
+      "p1Win": 0.5224
+    },
+    "ironyeu__mr_dr_raven": {
+      "p1Win": 0.7801
+    },
+    "ironyeu__pirl_fresh": {
+      "p1Win": 0.7454
+    },
+    "ironyeu__poleuky": {
+      "p1Win": 0.5979
+    },
+    "ironyeu__psiphicode": {
+      "p1Win": 0.5663
+    },
+    "ironyeu__rambler_ing": {
+      "p1Win": 0.7618
+    },
+    "ironyeu__theMixed_": {
+      "p1Win": 0.731
+    },
+    "ironyeu__wander652": {
+      "p1Win": 0.8044
+    },
+    "jeffqed__mr_dr_raven": {
+      "p1Win": 0.6677
+    },
+    "jeffqed__pirl_fresh": {
+      "p1Win": 0.5838
+    },
+    "jeffqed__poleuky": {
+      "p1Win": 0.5675
+    },
+    "jeffqed__psiphicode": {
+      "p1Win": 0.5633
+    },
+    "jeffqed__rambler_ing": {
+      "p1Win": 0.6005
+    },
+    "jeffqed__theMixed_": {
+      "p1Win": 0.629
+    },
+    "jeffqed__wander652": {
+      "p1Win": 0.6382
+    },
+    "mr_dr_raven__pirl_fresh": {
+      "p1Win": 0.468
+    },
+    "mr_dr_raven__poleuky": {
+      "p1Win": 0.3716
+    },
+    "mr_dr_raven__psiphicode": {
+      "p1Win": 0.3662
+    },
+    "mr_dr_raven__rambler_ing": {
+      "p1Win": 0.5078
+    },
+    "mr_dr_raven__theMixed_": {
+      "p1Win": 0.4249
+    },
+    "mr_dr_raven__wander652": {
+      "p1Win": 0.465
+    },
+    "pirl_fresh__poleuky": {
+      "p1Win": 0.4234
+    },
+    "pirl_fresh__psiphicode": {
+      "p1Win": 0.4544
+    },
+    "pirl_fresh__rambler_ing": {
+      "p1Win": 0.4942
+    },
+    "pirl_fresh__theMixed_": {
+      "p1Win": 0.5597
+    },
+    "pirl_fresh__wander652": {
+      "p1Win": 0.4769
+    },
+    "poleuky__psiphicode": {
+      "p1Win": 0.5327
+    },
+    "poleuky__rambler_ing": {
+      "p1Win": 0.5787
+    },
+    "poleuky__theMixed_": {
+      "p1Win": 0.666
+    },
+    "poleuky__wander652": {
+      "p1Win": 0.5876
+    },
+    "psiphicode__rambler_ing": {
+      "p1Win": 0.5774
+    },
+    "psiphicode__theMixed_": {
+      "p1Win": 0.6343
+    },
+    "psiphicode__wander652": {
+      "p1Win": 0.6351
+    },
+    "rambler_ing__theMixed_": {
+      "p1Win": 0.5508
+    },
+    "rambler_ing__wander652": {
+      "p1Win": 0.551
+    },
+    "theMixed___wander652": {
+      "p1Win": 0.4153
     }
   }
 }
