@@ -27,6 +27,9 @@ export function Header() {
         <p className="text-white/40 text-xs">
           Bracket created by Ignite (Harv)
         </p>
+        <p className="text-white/40 text-xs">
+          RAGEBAIT model created by Rambler
+        </p>
       </div>
 
       <div className="flex items-center gap-3">
