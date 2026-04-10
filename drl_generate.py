@@ -50,7 +50,7 @@ TWITCH_TOKEN_URL = "https://id.twitch.tv/oauth2/token"
 TWITCH_USERS_URL = "https://api.twitch.tv/helix/users"
 
 TOTAL_SEEDS      = 8
-N_SIM            = 100_000
+N_SIM            = 1_000_000
 SEED_RNG         = 42
 TWO_WAY_ITERS    = 50
 RAGE_COMPRESS_LO = 72.0
