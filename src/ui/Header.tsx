@@ -21,6 +21,12 @@ export function Header() {
         <p className="text-white/60 text-sm mt-1">
           32-player double elimination · live results
         </p>
+        <p className="text-white/40 text-xs mt-1">
+          DRL created by Forsa
+        </p>
+        <p className="text-white/40 text-xs">
+          Bracket created by Ignite (Harv)
+        </p>
       </div>
 
       <div className="flex items-center gap-3">
