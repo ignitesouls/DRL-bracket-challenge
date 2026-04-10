@@ -243,9 +243,20 @@ function ReachRow({
 }
 
 function FlagBox({ code }: { code: string }) {
-  // The React app doesn't ship the flag-icons library. Render a simple
-  // text-style country code chip that works without extra deps.
-  return <span className="pcard__flag">{code.toUpperCase()}</span>;
+  // Use flagcdn.com — no bundled assets, serves proper flag PNGs keyed by
+  // 2-letter ISO country code. 2x size for retina, rendered at 20x15.
+  const lower = code.toLowerCase();
+  return (
+    <img
+      className="pcard__flag-img"
+      src={`https://flagcdn.com/40x30/${lower}.png`}
+      srcSet={`https://flagcdn.com/80x60/${lower}.png 2x`}
+      width={20}
+      height={15}
+      alt={code.toUpperCase()}
+      loading="lazy"
+    />
+  );
 }
 
 function TwitchIcon() {

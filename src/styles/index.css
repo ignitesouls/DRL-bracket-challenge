@@ -1078,7 +1078,25 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--c-text-dim);
-  margin-top: 1px;
+  margin-top: 2px;
+  min-width: 0;
+}
+
+.pcard__country > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.pcard__flag-img {
+  display: block;
+  width: 20px;
+  height: 15px;
+  border-radius: 1px;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .pcard__flag {
