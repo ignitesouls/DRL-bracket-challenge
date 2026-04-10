@@ -21,7 +21,23 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Rajdhani"', 'system-ui', 'sans-serif'],
+        body: ['"Barlow"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+      },
+      keyframes: {
+        'pulse-gold': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(240, 185, 11, 0.7)' },
+          '50%': { boxShadow: '0 0 0 6px rgba(240, 185, 11, 0)' },
+        },
+        'fade-up': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'pulse-gold': 'pulse-gold 1.8s ease-in-out infinite',
+        'fade-up': 'fade-up 0.4s ease-out both',
       },
     },
   },
