@@ -9,6 +9,8 @@ import { AdminBar } from './admin/AdminBar';
 import { MatchEditor } from './admin/MatchEditor';
 import { useBracketExport } from './export/useBracketExport';
 import { LockCountdown } from './ui/LockCountdown';
+import { useLeaderboard } from './leaderboard/useLeaderboard';
+import { LeaderboardPanel } from './leaderboard/LeaderboardPanel';
 
 type View = 'live' | 'predictions';
 
@@ -54,6 +56,11 @@ export default function App() {
   const completedCount = bracket.matches.filter((m) => m.winnerId !== null).length;
   const totalMatches = bracket.matches.length || 46;
   const canPredict = !!user && bracket.matches.length > 0;
+
+  // Leaderboard fetches only once at least one match has been resolved
+  // AND the viewer is on the Live view (where the panel is anchored).
+  const leaderboardEnabled = view === 'live' && completedCount > 0;
+  const leaderboard = useLeaderboard({ enabled: leaderboardEnabled });
 
   // Per-match correct/incorrect overlay for the predictions view
   const pickResultById = useMemo(() => {
@@ -263,6 +270,16 @@ export default function App() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Leaderboard floating panel — Live view only, after first result */}
+      {leaderboardEnabled && (
+        <LeaderboardPanel
+          entries={leaderboard.entries}
+          loading={leaderboard.loading}
+          error={leaderboard.error}
+          currentUserId={user?.id ?? null}
+        />
       )}
 
       {/* Admin match editor modal */}
