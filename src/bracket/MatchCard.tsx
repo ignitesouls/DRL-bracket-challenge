@@ -1,4 +1,5 @@
 import type { Match, Player } from './types';
+import { getWinProbability } from '../players/playerData';
 
 interface MatchCardProps {
   match: Match;
@@ -79,6 +80,16 @@ export function MatchCard({
   const [s1, s2] = parseScore(match.score);
   const slotsClickable = !adminMode && !locked && ready && !!onPick;
 
+  // Win % badges — only when both slots are filled and the match isn't yet
+  // completed. Looked up from the simulator's pairwise table by displayName.
+  const odds =
+    ready && !completed && player1 && player2
+      ? getWinProbability(player1.displayName, player2.displayName)
+      : null;
+  const p1Pct = odds ? Math.round(odds.aWin * 100) : null;
+  const p2Pct = odds ? Math.round(odds.bWin * 100) : null;
+  const p1IsFav = odds !== null && odds.aWin >= odds.bWin;
+
   return (
     <div
       className={classes}
@@ -113,6 +124,8 @@ export function MatchCard({
         isLoser={completed && match.winnerId !== match.player1Id}
         clickable={slotsClickable}
         score={s1}
+        winPct={p1Pct}
+        isFavorite={odds !== null && p1IsFav}
         onClick={() => player1 && onPick?.(match.id, player1.id)}
       />
       <PlayerSlot
@@ -121,6 +134,8 @@ export function MatchCard({
         isLoser={completed && match.winnerId !== match.player2Id}
         clickable={slotsClickable}
         score={s2}
+        winPct={p2Pct}
+        isFavorite={odds !== null && !p1IsFav}
         onClick={() => player2 && onPick?.(match.id, player2.id)}
       />
     </div>
@@ -133,6 +148,10 @@ interface PlayerSlotProps {
   isLoser: boolean;
   clickable: boolean;
   score: string | null;
+  /** Integer 0–100 of the model's win probability; null = hide. */
+  winPct: number | null;
+  /** When true, this slot is the model's favorite (>= 50%). */
+  isFavorite: boolean;
   onClick: () => void;
 }
 
@@ -142,6 +161,8 @@ function PlayerSlot({
   isLoser,
   clickable,
   score,
+  winPct,
+  isFavorite,
   onClick,
 }: PlayerSlotProps) {
   const classes = [
@@ -173,6 +194,16 @@ function PlayerSlot({
       />
       <span className="player-name">{player.displayName}</span>
       {score !== null && <span className="player-score">{score}</span>}
+      {winPct !== null && score === null && (
+        <span
+          className={
+            'player-win-pct' + (isFavorite ? ' is-favorite' : ' is-underdog')
+          }
+          title={`Model probability: ${winPct}%`}
+        >
+          {winPct}%
+        </span>
+      )}
     </div>
   );
 }

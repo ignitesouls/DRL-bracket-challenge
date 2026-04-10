@@ -483,6 +483,33 @@
     color: var(--c-gold);
   }
 
+  /* Model win-probability badge, shown on the right of each slot before the
+     match is completed. Favorite gets a gold tint, underdog stays muted. */
+  .player-win-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    line-height: 1.4;
+  }
+  .player-win-pct.is-favorite {
+    color: var(--c-gold);
+    border-color: rgba(240, 185, 11, 0.35);
+    background: rgba(240, 185, 11, 0.08);
+  }
+  .player-win-pct.is-underdog {
+    color: var(--c-text-dim);
+    border-color: var(--c-border);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .player-slot.is-loser .player-win-pct {
+    opacity: 0.5;
+  }
+
   /* ----- Buttons ----- */
   .btn {
     display: inline-flex;

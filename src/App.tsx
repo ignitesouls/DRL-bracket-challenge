@@ -367,7 +367,7 @@ function ViewTabs({
         onClick={() => onChange('players')}
         style={baseTab(view === 'players')}
       >
-        Players
+        Player Stats
       </button>
     </div>
   );

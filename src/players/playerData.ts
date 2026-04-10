@@ -29,9 +29,14 @@ export interface PlayerStats {
   bracketEntry: 'Winners' | 'Losers';
 }
 
+interface PairwiseEntry {
+  p1Win: number;
+}
+
 interface PlayerStatsFile {
   generatedAt: string | null;
   players: PlayerStats[];
+  pairwise?: Record<string, PairwiseEntry>;
 }
 
 const file = raw as PlayerStatsFile;
@@ -42,6 +47,55 @@ export const PLAYER_STATS: PlayerStats[] = file.players
   .sort((a, b) => a.rank - b.rank);
 
 export const GENERATED_AT: string | null = file.generatedAt;
+
+// ---------------------------------------------------------------------------
+// Pairwise win probabilities — used by MatchCard to render win-% badges on
+// matches where both slots are filled. Keys in the JSON are sorted-name
+// pairs joined with "__" and `p1Win` is the probability that the
+// alphabetically-first player wins. Unknown pairs return null.
+//
+// Lookups are case-insensitive on the React side so that minor casing
+// drift between ROSTER displayNames and the Python PLAYOFF_PLAYERS list
+// doesn't silently break the feature.
+
+const PAIRWISE_RAW: Record<string, PairwiseEntry> = file.pairwise ?? {};
+
+// Case-insensitive lookup map: lowercase name → canonical cased name as it
+// appears in the pairwise keys. We derive it from the player list so we
+// know every valid canonical form.
+const LOWER_TO_CANON = new Map<string, string>();
+for (const p of PLAYER_STATS) {
+  LOWER_TO_CANON.set(p.name.toLowerCase(), p.name);
+}
+
+function canonicalName(name: string): string | null {
+  return LOWER_TO_CANON.get(name.toLowerCase()) ?? null;
+}
+
+/**
+ * Returns the model's win probabilities for a matchup between two players,
+ * or null if the pair is unknown (e.g. one of the names isn't in the
+ * roster, or the pairwise table hasn't been populated by the simulator).
+ *
+ * `aWin + bWin === 1`.
+ */
+export function getWinProbability(
+  playerA: string,
+  playerB: string,
+): { aWin: number; bWin: number } | null {
+  const canonA = canonicalName(playerA);
+  const canonB = canonicalName(playerB);
+  if (!canonA || !canonB || canonA === canonB) return null;
+
+  const [first, second] = [canonA, canonB].sort();
+  const entry = PAIRWISE_RAW[`${first}__${second}`];
+  if (!entry) return null;
+
+  // The stored p1Win is "first wins"; flip if caller asked about the other.
+  const firstWins = entry.p1Win;
+  const aWin = canonA === first ? firstWins : 1 - firstWins;
+  return { aWin, bWin: 1 - aWin };
+}
 
 /** Find a player by their playoff display name. */
 export function playerStatsByName(name: string): PlayerStats | undefined {

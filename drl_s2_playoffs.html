@@ -671,6 +671,12 @@ const MATCH_ODDS = {
   }
 };
 
+// ── Pairwise win probabilities (filled by simulate_tournament) ──
+// Keys are sorted-name pairs joined with "__". p1Win is the probability
+// that the alphabetically-first player wins. Consumed by the React app
+// via src/data/playerStats.json.
+const PAIRWISE_ODDS = {};
+
 // ── Player model stats (mock — will be derived from RAGEBAIT simulation) ──
 // rage: 72–83 (compressed qualifier score), bait: 1–5 (collapse risk), cons: 0–1 (consistency)
 const PLAYER_STATS = {

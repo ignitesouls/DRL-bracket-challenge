@@ -961,5 +961,55 @@
       },
       "bracketEntry": "Losers"
     }
-  ]
+  ],
+  "pairwise": {
+    "HooZher__rambler_ing": {
+      "p1Win": 0.7707
+    },
+    "EnsgMaster__Forsa": {
+      "p1Win": 0.6393
+    },
+    "Kayjuro___poleuky": {
+      "p1Win": 0.4828
+    },
+    "AzaZ_ow__Pluryl": {
+      "p1Win": 0.4106
+    },
+    "GustafGabel__Rakushain_": {
+      "p1Win": 0.557
+    },
+    "Niorra__RomainJacques_": {
+      "p1Win": 0.5676
+    },
+    "LazyHelios__psiphicode": {
+      "p1Win": 0.596
+    },
+    "ironyeu__jeffqed": {
+      "p1Win": 0.5196
+    },
+    "Dagann_e__pirl_fresh": {
+      "p1Win": 0.403
+    },
+    "NuclearPastaTom__az_gar25": {
+      "p1Win": 0.5988
+    },
+    "Teddy59C__Typin__": {
+      "p1Win": 0.5462
+    },
+    "consta_sama__theMixed_": {
+      "p1Win": 0.5955
+    },
+    "LilAggy__Unlucked_Destro": {
+      "p1Win": 0.5727
+    },
+    "Owarida__wander652": {
+      "p1Win": 0.374
+    },
+    "Mokyx__mr_dr_raven": {
+      "p1Win": 0.5615
+    },
+    "RannisConsortBryan__SeriousChallenges": {
+      "p1Win": 0.3778
+    }
+  }
 }

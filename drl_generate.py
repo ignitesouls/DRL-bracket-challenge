@@ -575,13 +575,27 @@ def simulate_tournament(players, seed_model, n=N_SIM):
             'spread': pair_spread.get((a, b), 0.0),
         }
 
-    return match_odds, round_reach
+    # Pairwise win probabilities for every player pair. React consumes these
+    # to render the win-% badges on match cards once both slots of a match
+    # are filled (live view or via picks in predictions view). We store
+    # canonical keys of the form "{alpha_first}__{alpha_second}" where the
+    # first name is the alphabetically earlier one, and `p1Win` is the
+    # probability that the alphabetically-first player wins.
+    pairwise = {}
+    for i, a in enumerate(names):
+        for b in names[i+1:]:
+            first, second = sorted([a, b])
+            p_first_wins = win_prob.get((first, second), 0.5)
+            key = f'{first}__{second}'
+            pairwise[key] = {'p1Win': round(float(p_first_wins), 4)}
+
+    return match_odds, round_reach, pairwise
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 8 — INJECT INTO HTML
 # ══════════════════════════════════════════════════════════════════════════════
 
-def inject_html(html_path, match_odds, player_stats, match_dates, avatars):
+def inject_html(html_path, match_odds, player_stats, match_dates, avatars, pairwise=None):
     with open(html_path, encoding='utf-8') as f:
         html = f.read()
 
@@ -598,6 +612,13 @@ def inject_html(html_path, match_odds, player_stats, match_dates, avatars):
 
     sub(r'const PLAYER_STATS\s*=\s*\{.*?\};',
         'const PLAYER_STATS = ' + json.dumps(player_stats, indent=2) + ';')
+
+    # Pairwise odds — only update if the block already exists in the HTML.
+    # The React JSON also consumes this, so the HTML acts as the source of
+    # truth even when the dashboard doesn't render it.
+    if pairwise is not None:
+        sub(r'const PAIRWISE_ODDS\s*=\s*\{.*?\};',
+            'const PAIRWISE_ODDS = ' + json.dumps(pairwise, indent=2) + ';')
 
     # Always overwrite dates if we got any; preserve existing if scraper returned nothing
     if match_dates:
@@ -680,6 +701,16 @@ def emit_react_json(html_path):
         print(f"  WARNING: could not parse HTML constants for JSON emit: {e}")
         return
 
+    # Pairwise odds are optional — the HTML block might not exist yet if
+    # the script has only ever run on an older template.
+    pairwise_raw = grab('PAIRWISE_ODDS')
+    pairwise = {}
+    if pairwise_raw is not None:
+        try:
+            pairwise = json.loads(js_to_json(add_key_quotes(pairwise_raw)))
+        except Exception as e:
+            print(f"  WARNING: could not parse PAIRWISE_ODDS: {e}")
+
     players = []
     for row in player_data:
         rank, name, total, *seeds = row
@@ -706,6 +737,7 @@ def emit_react_json(html_path):
     payload = {
         'generatedAt': datetime.now(timezone.utc).isoformat(),
         'players':     players,
+        'pairwise':    pairwise,
     }
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(payload, f, indent=2)
@@ -761,7 +793,7 @@ def run(html_path, skip_avatars=False, skip_dates=False, skip_model=False):
 
     # 7. Tournament simulation
     print("\nRunning tournament simulation...")
-    match_odds, round_reach = simulate_tournament(players, seed_model, n=N_SIM)
+    match_odds, round_reach, pairwise = simulate_tournament(players, seed_model, n=N_SIM)
 
     # Print R1 odds
     print("\nR1 Match odds:")
@@ -804,7 +836,7 @@ def run(html_path, skip_avatars=False, skip_dates=False, skip_model=False):
 
     # 9. Inject
     print("\nInjecting into HTML...")
-    inject_html(html_path, match_odds, player_stats, match_dates, avatars)
+    inject_html(html_path, match_odds, player_stats, match_dates, avatars, pairwise)
 
     # 10. Emit consolidated JSON for the React bracket-challenge app
     print("\nEmitting React JSON...")
