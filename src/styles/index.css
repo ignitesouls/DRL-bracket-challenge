@@ -353,6 +353,19 @@
     font-weight: 700;
   }
 
+  .match-meta__countdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: rgba(255, 213, 90, 0.78);
+    font-weight: 700;
+  }
+  .match-meta__countdown.is-imminent {
+    color: var(--c-gold-light);
+    text-shadow: 0 0 6px var(--c-gold-glow);
+    animation: pulse-gold 1.6s ease-in-out infinite;
+  }
+
   .match-meta__live {
     display: inline-flex;
     align-items: center;

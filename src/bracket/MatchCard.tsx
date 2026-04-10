@@ -21,6 +21,11 @@ interface MatchCardProps {
    * match is resolved, mark the pick as correct or incorrect.
    */
   pickResult?: 'correct' | 'incorrect' | null;
+  /**
+   * Current epoch time, ticked from BracketCanvas. Used to render the
+   * "IN 2H 14M" countdown for matches that have a scheduled start time.
+   */
+  now?: number;
 }
 
 /**
@@ -43,11 +48,19 @@ export function MatchCard({
   variant = 'normal',
   locked = false,
   pickResult = null,
+  now,
 }: MatchCardProps) {
   const ready = !!(player1 && player2);
   const completed = match.winnerId !== null;
   const live = match.status === 'live';
   const adminMode = !!onAdminEdit;
+  // Countdown only applies when there's a scheduled start that hasn't been
+  // reached yet, the match isn't already live, and isn't completed.
+  const countdown =
+    !live && !completed && match.scheduledAt && now !== undefined
+      ? formatCountdown(match.scheduledAt, now)
+      : null;
+  const startingSoon = countdown === 'STARTING SOON';
 
   const classes = [
     'match-card',
@@ -80,6 +93,15 @@ export function MatchCard({
           </span>
         ) : live ? (
           <span className="match-meta__live">LIVE</span>
+        ) : countdown ? (
+          <span
+            className={
+              'match-meta__countdown' +
+              (startingSoon ? ' is-imminent' : '')
+            }
+          >
+            <ClockIcon /> {countdown}
+          </span>
         ) : (
           <span>{shortRoundLabel(match.roundLabel)}</span>
         )}
@@ -155,6 +177,21 @@ function PlayerSlot({
   );
 }
 
+function ClockIcon() {
+  return (
+    <svg
+      width="9"
+      height="9"
+      viewBox="0 0 10 10"
+      fill="none"
+      style={{ display: 'inline-block', verticalAlign: 'middle' }}
+    >
+      <circle cx="5" cy="5" r="4" stroke="currentColor" />
+      <path d="M5 2.6V5l1.7 1" stroke="currentColor" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function LockIcon() {
   return (
     <svg
@@ -180,6 +217,29 @@ function parseScore(score: string | null): [string | null, string | null] {
   const m = score.match(/^(\d+)\s*[-:]\s*(\d+)$/);
   if (!m) return [null, null];
   return [m[1], m[2]];
+}
+
+/**
+ * Render a relative countdown to a scheduled match time. Returns null when
+ * the time has already passed (the auto-live overlay should take over by
+ * then). The output is uppercase and short enough to fit the meta strip.
+ */
+function formatCountdown(scheduledAtIso: string, now: number): string | null {
+  const target = Date.parse(scheduledAtIso);
+  if (Number.isNaN(target)) return null;
+  const ms = target - now;
+  if (ms <= 0) return null;
+  const totalMin = Math.floor(ms / 60_000);
+  if (totalMin < 5) return 'STARTING SOON';
+  if (totalMin < 60) return `IN ${totalMin}M`;
+  const totalHr = Math.floor(totalMin / 60);
+  const remMin = totalMin % 60;
+  if (totalHr < 24) {
+    return remMin > 0 ? `IN ${totalHr}H ${remMin}M` : `IN ${totalHr}H`;
+  }
+  const totalDay = Math.floor(totalHr / 24);
+  const remHr = totalHr % 24;
+  return remHr > 0 ? `IN ${totalDay}D ${remHr}H` : `IN ${totalDay}D`;
 }
 
 function shortRoundLabel(label: string): string {

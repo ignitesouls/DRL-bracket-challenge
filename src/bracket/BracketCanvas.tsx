@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Match, Player } from './types';
 import { computeLayout, computeConnectors } from './layout';
 import { MatchCard } from './MatchCard';
@@ -31,6 +31,22 @@ export function BracketCanvas({
 }: BracketCanvasProps) {
   const layout = useMemo(() => computeLayout(), []);
   const connectors = useMemo(() => computeConnectors(layout), [layout]);
+
+  // Coarse "now" tick (every 30s) so the per-card countdown text updates
+  // without re-rendering on every animation frame. 30s is granular enough
+  // for minute-level countdowns and won't thrash the bracket.
+  const [now, setNow] = useState<number>(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 30_000);
+    const onVis = () => {
+      if (document.visibilityState === 'visible') setNow(Date.now());
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+  }, []);
 
   return (
     <div
@@ -152,6 +168,7 @@ export function BracketCanvas({
               variant={m.id === 'GF' ? 'grand-final' : 'normal'}
               locked={lockedMatchIds?.has(m.id) ?? false}
               pickResult={pickResultById?.get(m.id) ?? null}
+              now={now}
             />
           </div>
         );
