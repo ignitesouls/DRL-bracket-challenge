@@ -7,13 +7,14 @@ import { useBracketState } from './state/useBracketState';
 import { usePredictions } from './state/usePredictions';
 import { AdminBar } from './admin/AdminBar';
 import { MatchEditor } from './admin/MatchEditor';
+import { AllBracketsView } from './admin/AllBracketsView';
 import { useBracketExport } from './export/useBracketExport';
 import { LockCountdown } from './ui/LockCountdown';
 import { useLeaderboard } from './leaderboard/useLeaderboard';
 import { LeaderboardPanel } from './leaderboard/LeaderboardPanel';
 import { PlayersView } from './players/PlayersView';
 
-type View = 'live' | 'predictions' | 'players';
+type View = 'live' | 'predictions' | 'players' | 'allbrackets';
 
 /**
  * Phase 7 — User Predictions.
@@ -80,9 +81,20 @@ export default function App() {
     if (view === 'predictions' && !user) setView('live');
   }, [view, user]);
 
-  // Hide the export button on the Players tab — there's no bracket there.
+  // Admin-only "All Brackets" tab is gated on the global lock. If the
+  // admin is sitting on that tab when they log out (or the clock rewinds
+  // in dev), bounce them back to Live.
+  const canSeeAllBrackets = isAdmin && predictions.globallyLocked;
+  useEffect(() => {
+    if (view === 'allbrackets' && !canSeeAllBrackets) setView('live');
+  }, [view, canSeeAllBrackets]);
+
+  // Hide the export button on tabs without a user-facing bracket.
   const showExportButton =
-    view !== 'players' && bracket.matches.length > 0 && (view === 'live' || !!user);
+    view !== 'players' &&
+    view !== 'allbrackets' &&
+    bracket.matches.length > 0 &&
+    (view === 'live' || !!user);
 
   return (
     <div className="min-h-full">
@@ -111,6 +123,7 @@ export default function App() {
               onChange={setView}
               canPredict={canPredict}
               isLoggedIn={!!user}
+              canSeeAllBrackets={canSeeAllBrackets}
             />
             <span
               className="font-mono text-xs"
@@ -120,7 +133,9 @@ export default function App() {
                 ? `${completedCount}/${totalMatches} matches resolved`
                 : view === 'predictions'
                   ? `${predictions.predictionMap.size} picks · ${predictions.correctCount}/${predictions.resolvedCount} correct`
-                  : '32 qualified players'}
+                  : view === 'players'
+                    ? '32 qualified players'
+                    : 'Admin · every submitted bracket'}
             </span>
           </div>
 
@@ -252,8 +267,18 @@ export default function App() {
       {/* Players tab — static stat cards for all 32 qualifiers */}
       {view === 'players' && <PlayersView />}
 
+      {/* All Brackets tab — admin-only, post-lock */}
+      {view === 'allbrackets' && canSeeAllBrackets && (
+        <AllBracketsView
+          players={bracket.players}
+          playerById={bracket.playerById}
+          liveMatches={bracket.displayMatches}
+          enabled={view === 'allbrackets'}
+        />
+      )}
+
       {/* Bracket canvas (horizontally scrollable) */}
-      {view !== 'players' && bracket.matches.length > 0 && (view === 'live' || user) && (
+      {view !== 'players' && view !== 'allbrackets' && bracket.matches.length > 0 && (view === 'live' || user) && (
         <div className="overflow-x-auto pb-12">
           <div className="scroll-hint">← Scroll horizontally to see the full bracket →</div>
           <div
@@ -323,11 +348,13 @@ function ViewTabs({
   onChange,
   canPredict,
   isLoggedIn,
+  canSeeAllBrackets,
 }: {
   view: View;
   onChange: (v: View) => void;
   canPredict: boolean;
   isLoggedIn: boolean;
+  canSeeAllBrackets: boolean;
 }) {
   const baseTab = (active: boolean): React.CSSProperties => ({
     fontFamily: '"Rajdhani", sans-serif',
@@ -369,6 +396,22 @@ function ViewTabs({
       >
         Player Stats
       </button>
+      {canSeeAllBrackets && (
+        <button
+          onClick={() => onChange('allbrackets')}
+          style={{
+            ...baseTab(view === 'allbrackets'),
+            borderColor:
+              view === 'allbrackets'
+                ? 'var(--c-gold)'
+                : 'rgba(76,224,255,0.35)',
+            color: view === 'allbrackets' ? 'var(--c-gold)' : 'var(--c-cyan)',
+          }}
+          title="Admin only — every submitted bracket"
+        >
+          All Brackets
+        </button>
+      )}
     </div>
   );
 }

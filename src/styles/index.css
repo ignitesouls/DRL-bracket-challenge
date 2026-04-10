@@ -1351,6 +1351,258 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ===========================================================================
+   All Brackets (admin view)
+=========================================================================== */
+
+.abview__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.abview__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--c-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.abview__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.abview__sort-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.abview__sort {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  color: var(--c-text);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.abview__sort:focus-visible {
+  border-color: var(--c-gold);
+}
+
+.abview__error {
+  background: rgba(255, 59, 107, 0.06);
+  border: 1px solid rgba(255, 59, 107, 0.3);
+  border-left-width: 3px;
+  border-radius: 2px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  color: var(--c-text);
+  font-size: 13px;
+}
+
+.abview__error-hint {
+  margin-top: 6px;
+  color: var(--c-text-dim);
+  font-size: 11px;
+}
+
+.abview__empty {
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--c-text-dim);
+  background: var(--c-surface);
+  border: 1px dashed var(--c-border);
+  border-radius: 3px;
+}
+
+.abview__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Row card ──────────────────────────────────────────────────── */
+
+.abcard {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.abcard:hover {
+  border-color: var(--c-border-strong);
+}
+
+.abcard--open {
+  border-color: var(--c-gold);
+  background: linear-gradient(180deg, #15172a 0%, #0e0f1d 100%);
+}
+
+.abcard__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  color: var(--c-text);
+  box-sizing: border-box;
+  transition: background 0.1s;
+}
+
+.abcard:hover .abcard__head {
+  background: var(--c-surface-2);
+}
+
+.abcard--open .abcard__head {
+  background: rgba(240, 185, 11, 0.05);
+}
+
+.abcard__expand {
+  font-size: 11px;
+  color: var(--c-text-faint);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s;
+}
+
+.abcard--open .abcard__expand {
+  transform: rotate(90deg);
+  color: var(--c-gold);
+}
+
+.abcard__rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--c-text-dim);
+  min-width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.abcard__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-gold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.abcard__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.abcard__name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.abcard__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--c-text-dim);
+  flex-wrap: wrap;
+}
+
+.abcard__handle {
+  color: var(--c-twitch);
+}
+
+.abcard__sep {
+  color: var(--c-text-faint);
+}
+
+.abcard__score {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1px solid rgba(240, 185, 11, 0.35);
+  border-radius: 2px;
+  background: rgba(240, 185, 11, 0.06);
+  min-width: 110px;
+}
+
+.abcard__points {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-gold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.abcard__correct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text-dim);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── Expanded bracket area ─────────────────────────────────────── */
+
+.abcard__detail {
+  border-top: 1px solid var(--c-border);
+  background: var(--c-bg);
+}
+
+.abcard__bracket-scroll {
+  overflow-x: auto;
+  padding: 14px 0;
+}
+
+.abcard__bracket-inner {
+  width: fit-content;
+  min-width: 100%;
+  padding: 0 16px;
+}
+
 /* ---------------------------------------------------------------------------
    Reduced motion — respect user preference
 ---------------------------------------------------------------------------- */
