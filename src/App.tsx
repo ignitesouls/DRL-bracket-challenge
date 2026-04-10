@@ -8,6 +8,7 @@ import { usePredictions } from './state/usePredictions';
 import { AdminBar } from './admin/AdminBar';
 import { MatchEditor } from './admin/MatchEditor';
 import { useBracketExport } from './export/useBracketExport';
+import { LockCountdown } from './ui/LockCountdown';
 
 type View = 'live' | 'predictions';
 
@@ -86,6 +87,8 @@ export default function App() {
           />
         )}
 
+        <LockCountdown />
+
         {/* Toolbar with view tabs */}
         <div className="sticky-toolbar flex items-center justify-between mb-4 mt-2 flex-wrap gap-3">
           <div className="flex items-center gap-4">
@@ -106,26 +109,28 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2">
-            {view === 'predictions' && predictions.predictionMap.size > 0 && (
-              <button
-                onClick={() => {
-                  if (
-                    confirm(
-                      'Clear all of your predictions? This cannot be undone.'
-                    )
-                  ) {
-                    predictions.clearAllPredictions();
-                  }
-                }}
-                className="btn btn--ghost"
-                style={{
-                  borderColor: 'rgba(255,59,107,0.3)',
-                  color: 'var(--c-red)',
-                }}
-              >
-                Clear Picks
-              </button>
-            )}
+            {view === 'predictions' &&
+              predictions.predictionMap.size > 0 &&
+              !predictions.globallyLocked && (
+                <button
+                  onClick={() => {
+                    if (
+                      confirm(
+                        'Clear all of your predictions? This cannot be undone.'
+                      )
+                    ) {
+                      predictions.clearAllPredictions();
+                    }
+                  }}
+                  className="btn btn--ghost"
+                  style={{
+                    borderColor: 'rgba(255,59,107,0.3)',
+                    color: 'var(--c-red)',
+                  }}
+                >
+                  Clear Picks
+                </button>
+              )}
 
             {view === 'live' && isAdmin && bracket.matches.length > 0 && (
               <span

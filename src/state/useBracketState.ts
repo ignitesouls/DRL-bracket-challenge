@@ -80,6 +80,11 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
     matchesRef.current = matches;
   }, [matches]);
 
+  // Guard against concurrent admin button presses. The admin UI buttons
+  // check this before firing, so a double-click won't issue two seed
+  // / initialize / reset writes back to back.
+  const busyRef = useRef(false);
+
   const playerById = useMemo(
     () => new Map(players.map((p) => [p.id, p])),
     [players]
@@ -124,9 +129,28 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
 
     load();
 
-    // Realtime: any change to matches or players is pushed into local state
-    const channel = supabase
-      .channel('drl-bracket')
+    // Pause realtime when the tab is hidden so we don't hold a connection
+    // open for idle viewers (Supabase free tier caps concurrent connections).
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const subscribe = () => {
+      if (channel) return;
+      channel = buildChannel();
+    };
+    const unsubscribe = () => {
+      if (!channel) return;
+      supabase.removeChannel(channel);
+      channel = null;
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') subscribe();
+      else unsubscribe();
+    };
+
+    function buildChannel() {
+      return supabase
+        .channel('drl-bracket')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'matches' },
@@ -172,10 +196,15 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
         }
       )
       .subscribe();
+    }
+
+    if (document.visibilityState === 'visible') subscribe();
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       cancelled = true;
-      supabase.removeChannel(channel);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      unsubscribe();
     };
   }, []);
 
@@ -244,24 +273,31 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
   );
 
   const seedPlayers = useCallback(async () => {
+    if (busyRef.current) return;
     if (!isSupabaseConfigured) {
       setPlayers(PLACEHOLDER_PLAYERS);
       return;
     }
     if (!isAdmin) return;
-    const rows = PLACEHOLDER_PLAYERS.map(playerToInsertRow);
-    const { data, error } = await supabase.from('players').insert(rows).select('*');
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('[bracket] seedPlayers failed:', error.message);
-      setErrorMessage(error.message);
-      throw error;
+    busyRef.current = true;
+    try {
+      const rows = PLACEHOLDER_PLAYERS.map(playerToInsertRow);
+      const { data, error } = await supabase.from('players').insert(rows).select('*');
+      if (error) {
+        // eslint-disable-next-line no-console
+        console.error('[bracket] seedPlayers failed:', error.message);
+        setErrorMessage(error.message);
+        throw error;
+      }
+      const ps = (data ?? []).map((r) => rowToPlayer(r as PlayerRow));
+      setPlayers(ps);
+    } finally {
+      busyRef.current = false;
     }
-    const ps = (data ?? []).map((r) => rowToPlayer(r as PlayerRow));
-    setPlayers(ps);
   }, [isAdmin]);
 
   const initializeBracket = useCallback(async () => {
+    if (busyRef.current) return;
     const ps = players.length > 0 ? players : PLACEHOLDER_PLAYERS;
     const fresh = buildInitialMatches(ps);
     if (!isSupabaseConfigured) {
@@ -269,20 +305,26 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
       return;
     }
     if (!isAdmin) return;
-    const { error } = await supabase
-      .from('matches')
-      .upsert(fresh.map(matchToRow), { onConflict: 'id' });
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('[bracket] initializeBracket failed:', error.message);
-      setErrorMessage(error.message);
-      throw error;
+    busyRef.current = true;
+    try {
+      const { error } = await supabase
+        .from('matches')
+        .upsert(fresh.map(matchToRow), { onConflict: 'id' });
+      if (error) {
+        // eslint-disable-next-line no-console
+        console.error('[bracket] initializeBracket failed:', error.message);
+        setErrorMessage(error.message);
+        throw error;
+      }
+      setMatches(fresh);
+      setMode('connected');
+    } finally {
+      busyRef.current = false;
     }
-    setMatches(fresh);
-    setMode('connected');
   }, [players, isAdmin]);
 
   const resetBracket = useCallback(async () => {
+    if (busyRef.current) return;
     const ps = players.length > 0 ? players : PLACEHOLDER_PLAYERS;
     const fresh = buildInitialMatches(ps);
     if (!isSupabaseConfigured) {
@@ -290,17 +332,22 @@ export function useBracketState({ isAdmin }: UseBracketStateOptions): BracketSta
       return;
     }
     if (!isAdmin) return;
-    // Upsert all 46 with cleared state
-    const { error } = await supabase
-      .from('matches')
-      .upsert(fresh.map(matchToRow), { onConflict: 'id' });
-    if (error) {
-      // eslint-disable-next-line no-console
-      console.error('[bracket] resetBracket failed:', error.message);
-      setErrorMessage(error.message);
-      throw error;
+    busyRef.current = true;
+    try {
+      // Upsert all 46 with cleared state
+      const { error } = await supabase
+        .from('matches')
+        .upsert(fresh.map(matchToRow), { onConflict: 'id' });
+      if (error) {
+        // eslint-disable-next-line no-console
+        console.error('[bracket] resetBracket failed:', error.message);
+        setErrorMessage(error.message);
+        throw error;
+      }
+      setMatches(fresh);
+    } finally {
+      busyRef.current = false;
     }
-    setMatches(fresh);
   }, [players, isAdmin]);
 
   return {

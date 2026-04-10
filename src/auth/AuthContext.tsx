@@ -27,6 +27,7 @@ interface AuthContextValue {
   twitchAvatarUrl: string | null;
   isAdmin: boolean;
   loading: boolean;
+  authError: string | null;
   signInWithTwitch: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // Bootstrap: fetch existing session + subscribe to auth changes
   useEffect(() => {
@@ -108,17 +110,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [twitchUserId]);
 
   const signInWithTwitch = async () => {
+    setAuthError(null);
+    // Anchor to the deployed base path so Pages → /DRL-bracket-challenge/
+    // and local dev → / both round-trip correctly. Falls back to current
+    // pathname if BASE_URL is somehow missing.
+    const base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '/');
+    const redirectTo = window.location.origin + base;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'twitch',
-      options: {
-        // Return to the current page after OAuth round-trip
-        redirectTo: window.location.origin + window.location.pathname,
-      },
+      options: { redirectTo },
     });
     if (error) {
       // eslint-disable-next-line no-console
       console.error('[auth] Twitch sign-in failed:', error.message);
-      alert('Twitch sign-in failed: ' + error.message);
+      setAuthError(error.message);
     }
   };
 
@@ -137,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       twitchAvatarUrl,
       isAdmin,
       loading,
+      authError,
       signInWithTwitch,
       signOut,
     }),
@@ -149,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       twitchAvatarUrl,
       isAdmin,
       loading,
+      authError,
     ]
   );
 

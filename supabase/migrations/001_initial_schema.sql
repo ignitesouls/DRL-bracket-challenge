@@ -119,21 +119,32 @@ DROP POLICY IF EXISTS matches_admin_write ON matches;
 CREATE POLICY matches_admin_write ON matches FOR ALL
   USING (is_admin()) WITH CHECK (is_admin());
 
--- Predictions: anyone can read all predictions, but only own can be written
+-- Predictions: a user can read their OWN picks (and admins can read all
+-- for scoring / leaderboards). This prevents anonymous scraping of every
+-- viewer's bracket before the tournament is locked in.
 DROP POLICY IF EXISTS predictions_read ON predictions;
-CREATE POLICY predictions_read ON predictions FOR SELECT USING (true);
+CREATE POLICY predictions_read ON predictions FOR SELECT
+  USING (auth.uid() = user_id OR is_admin());
+
+-- Global cutoff: after this moment, no user can create / edit / delete a
+-- prediction row. Keep this constant in lock-step with src/config/lockTime.ts
+-- on the client. April 12, 2026 — 11:00 AM Pacific (PDT, UTC-7) === 18:00 UTC.
+CREATE OR REPLACE FUNCTION predictions_unlocked() RETURNS boolean AS $$
+  SELECT now() < TIMESTAMPTZ '2026-04-12 11:00:00-07';
+$$ LANGUAGE sql STABLE;
 
 DROP POLICY IF EXISTS predictions_own_insert ON predictions;
 CREATE POLICY predictions_own_insert ON predictions FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK (auth.uid() = user_id AND predictions_unlocked());
 
 DROP POLICY IF EXISTS predictions_own_update ON predictions;
 CREATE POLICY predictions_own_update ON predictions FOR UPDATE
-  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  USING (auth.uid() = user_id AND predictions_unlocked())
+  WITH CHECK (auth.uid() = user_id AND predictions_unlocked());
 
 DROP POLICY IF EXISTS predictions_own_delete ON predictions;
 CREATE POLICY predictions_own_delete ON predictions FOR DELETE
-  USING (auth.uid() = user_id);
+  USING (auth.uid() = user_id AND predictions_unlocked());
 
 -- Admins table: anyone authenticated can read (so the client can check
 -- their own admin status), but no one can write via the API. Inserts
@@ -145,5 +156,15 @@ CREATE POLICY admins_read ON admins FOR SELECT USING (true);
 -- Realtime: enable change broadcasts on matches and predictions
 -- ---------------------------------------------------------------------------
 
-ALTER PUBLICATION supabase_realtime ADD TABLE matches;
-ALTER PUBLICATION supabase_realtime ADD TABLE predictions;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='matches') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE matches;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='predictions') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE predictions;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='players') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE players;
+  END IF;
+END $$;

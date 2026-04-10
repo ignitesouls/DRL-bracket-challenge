@@ -3,6 +3,10 @@ import { isSupabaseConfigured, supabase } from '../auth/supabaseClient';
 import { buildInitialMatches } from '../bracket/bracketData';
 import { applyMatchResult } from '../bracket/engine';
 import type { Match, Player } from '../bracket/types';
+import {
+  PREDICTIONS_LOCK_AT_MS,
+  arePredictionsLocked,
+} from '../config/lockTime';
 
 /**
  * Per-user predictions hook.
@@ -45,6 +49,8 @@ export interface PredictionsState {
   correctCount: number;
   loading: boolean;
   error: string | null;
+  /** True once the global prediction deadline has passed. */
+  globallyLocked: boolean;
   /** Save (or update) a prediction. Cascade-clears stale downstream picks. */
   setPrediction: (matchId: string, predictedWinnerId: string) => Promise<void>;
   /** Wipe all of the user's predictions. */
@@ -66,6 +72,25 @@ export function usePredictions({
   useEffect(() => {
     rawRef.current = rawPredictions;
   }, [rawPredictions]);
+
+  // Live-tick the global lock so the UI flips at the deadline without
+  // needing a page refresh. We schedule a single timeout for the exact
+  // remaining duration (capped) and re-arm after it fires.
+  const [globallyLocked, setGloballyLocked] = useState<boolean>(() =>
+    arePredictionsLocked()
+  );
+  useEffect(() => {
+    if (globallyLocked) return;
+    const remaining = PREDICTIONS_LOCK_AT_MS - Date.now();
+    if (remaining <= 0) {
+      setGloballyLocked(true);
+      return;
+    }
+    // Cap at ~24 days so a faraway deadline still gets a periodic check.
+    const wait = Math.min(remaining + 50, 2_000_000_000);
+    const id = window.setTimeout(() => setGloballyLocked(arePredictionsLocked()), wait);
+    return () => window.clearTimeout(id);
+  }, [globallyLocked]);
 
   // -------------------------------------------------------------------------
   // Initial fetch + realtime subscription (own predictions only)
@@ -101,41 +126,62 @@ export function usePredictions({
         setLoading(false);
       });
 
-    const channel = supabase
-      .channel(`predictions-${userId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'predictions',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          if (payload.eventType === 'DELETE') {
-            const old = payload.old as Partial<PredictionRow>;
-            if (!old.match_id) return;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const buildChannel = () =>
+      supabase
+        .channel(`predictions-${userId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'predictions',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            if (payload.eventType === 'DELETE') {
+              const old = payload.old as Partial<PredictionRow>;
+              if (!old.match_id) return;
+              setRawPredictions((prev) => {
+                const next = new Map(prev);
+                next.delete(old.match_id!);
+                return next;
+              });
+              return;
+            }
+            const row = payload.new as PredictionRow;
+            if (!row?.match_id) return;
             setRawPredictions((prev) => {
               const next = new Map(prev);
-              next.delete(old.match_id!);
+              next.set(row.match_id, row.predicted_winner_id);
               return next;
             });
-            return;
           }
-          const row = payload.new as PredictionRow;
-          if (!row?.match_id) return;
-          setRawPredictions((prev) => {
-            const next = new Map(prev);
-            next.set(row.match_id, row.predicted_winner_id);
-            return next;
-          });
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+
+    const subscribe = () => {
+      if (channel) return;
+      channel = buildChannel();
+    };
+    const unsubscribe = () => {
+      if (!channel) return;
+      supabase.removeChannel(channel);
+      channel = null;
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') subscribe();
+      else unsubscribe();
+    };
+
+    if (document.visibilityState === 'visible') subscribe();
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       cancelled = true;
-      supabase.removeChannel(channel);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      unsubscribe();
     };
   }, [userId]);
 
@@ -148,15 +194,24 @@ export function usePredictions({
   );
 
   // -------------------------------------------------------------------------
-  // Locked match IDs (from the live bracket: live or completed)
+  // Locked match IDs.
+  //
+  //  - Per-match locks: any live or completed match (admin already started it)
+  //  - Global lock: every match once the prediction deadline has passed.
+  //    We pull match IDs off the user's predicted bracket so the locked set
+  //    covers the full 46-match grid even if the live bracket isn't fully
+  //    populated yet.
   // -------------------------------------------------------------------------
   const lockedMatchIds = useMemo(() => {
     const set = new Set<string>();
     for (const m of liveMatches) {
       if (m.status === 'live' || m.status === 'completed') set.add(m.id);
     }
+    if (globallyLocked) {
+      for (const m of liveMatches) set.add(m.id);
+    }
     return set;
-  }, [liveMatches]);
+  }, [liveMatches, globallyLocked]);
 
   // -------------------------------------------------------------------------
   // Accuracy: pick was correct iff actual.winnerId === prediction
@@ -179,8 +234,15 @@ export function usePredictions({
   // -------------------------------------------------------------------------
   const setPrediction = useCallback(
     async (matchId: string, predictedWinnerId: string) => {
+      // Hard cutoff: nothing changes after the global deadline. RLS
+      // enforces this server-side too, this is the friendly client guard.
+      if (arePredictionsLocked()) return;
+
       // Don't allow predictions on already-locked matches
       if (lockedMatchIds.has(matchId)) return;
+
+      // No-op if the user clicked the player they already picked.
+      if (rawRef.current.get(matchId) === predictedWinnerId) return;
 
       // 1. Apply the pick to the current predicted bracket via the engine
       const currentBracket = derivePredictedBracket(players, rawRef.current);
@@ -253,6 +315,7 @@ export function usePredictions({
   );
 
   const clearAllPredictions = useCallback(async () => {
+    if (arePredictionsLocked()) return;
     const prev = rawRef.current;
     setRawPredictions(new Map());
     if (!isSupabaseConfigured || !userId) return;
@@ -276,6 +339,7 @@ export function usePredictions({
     correctCount,
     loading,
     error,
+    globallyLocked,
     setPrediction,
     clearAllPredictions,
   };

@@ -8,6 +8,8 @@ export default defineConfig({
   base: '/DRL-bracket-challenge/',
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Sourcemaps off for prod so we don't ship the full TypeScript source
+    // to GitHub Pages. Flip back to true temporarily to debug a prod crash.
+    sourcemap: false,
   },
 });
