@@ -861,6 +861,450 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Players tab — qualifier stat cards
+---------------------------------------------------------------------------- */
+
+.players-view {
+  margin-top: 4px;
+}
+
+.players-view__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.players-view__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--c-text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.players-view__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.players-view__sort-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.players-view__sort {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  color: var(--c-text);
+  padding: 6px 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.players-view__sort:focus-visible {
+  border-color: var(--c-gold);
+}
+
+.players-view__expand-all {
+  font-size: 11px;
+  padding: 6px 12px;
+}
+
+.players-view__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+
+/* ── Card ──────────────────────────────────────────────────────── */
+
+.pcard {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.pcard:hover {
+  border-color: var(--c-border-strong);
+}
+
+.pcard--open {
+  border-color: var(--c-twitch);
+  grid-column: 1 / -1;
+}
+
+.pcard__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s;
+  color: var(--c-text);
+}
+
+.pcard:hover .pcard__head {
+  background: var(--c-surface-2);
+}
+
+.pcard--open .pcard__head {
+  background: #1a1428;
+}
+
+.pcard__expand {
+  font-size: 10px;
+  color: var(--c-text-faint);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.pcard--open .pcard__expand {
+  transform: rotate(90deg);
+  color: var(--c-twitch);
+}
+
+.pcard:hover .pcard__expand {
+  color: var(--c-gold);
+}
+
+.pcard__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-strong);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-gold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pcard__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.pcard__rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--c-text-dim);
+  min-width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.pcard__rank--top16 {
+  color: var(--c-gold-light);
+  font-weight: 500;
+}
+
+.pcard__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pcard__name {
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--c-text);
+}
+
+.pcard__country {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--c-text-dim);
+  margin-top: 1px;
+}
+
+.pcard__flag {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 2px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--c-text-dim);
+  background: rgba(255, 255, 255, 0.03);
+  flex-shrink: 0;
+}
+
+.pcard__twitch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  color: var(--c-twitch);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.pcard__twitch:hover {
+  background: rgba(145, 70, 255, 0.12);
+}
+
+/* ── Expanded detail ───────────────────────────────────────────── */
+
+.pcard__detail {
+  display: flex;
+  flex-direction: row;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding: 18px 16px 20px;
+  background: #111118;
+  border-top: 1px solid var(--c-border);
+  border-left: 2px solid var(--c-twitch);
+}
+
+.pcard__section {
+  min-width: 0;
+}
+
+.pcard__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+/* Seed bar chart */
+
+.pcard__seed-bars {
+  display: flex;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.pcard__seed-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  justify-content: flex-end;
+}
+
+.pcard__seed-bar {
+  width: 24px;
+  height: 64px;
+  background: var(--c-border);
+  border-radius: 2px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.pcard__seed-bar--best {
+  box-shadow: 0 0 0 1px var(--c-gold-light);
+}
+
+.pcard__seed-bar--null {
+  background: transparent;
+  border: 1px dashed var(--c-border-strong);
+}
+
+.pcard__seed-bar-fill {
+  width: 100%;
+  border-radius: 2px;
+}
+
+.pcard__seed-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.pcard__seed-score--best {
+  color: var(--c-gold-light);
+}
+
+.pcard__seed-score--null {
+  color: var(--c-text-faint);
+}
+
+.pcard__seed-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text-faint);
+  letter-spacing: 0.02em;
+}
+
+/* Stat pills (RAGE / BAIT / CONS) */
+
+.pcard__pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.pcard__pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 3px;
+  padding: 6px 12px;
+  min-width: 78px;
+  gap: 3px;
+}
+
+.pcard__pill-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-text-dim);
+}
+
+.pcard__pill-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text);
+  line-height: 1;
+}
+
+.pcard__pill--rage {
+  border-color: rgba(240, 185, 11, 0.35);
+}
+.pcard__pill--rage .pcard__pill-value {
+  color: var(--c-gold-light);
+}
+
+.pcard__pill--bait {
+  border-color: rgba(255, 59, 107, 0.35);
+}
+.pcard__pill--bait .pcard__pill-value {
+  color: var(--c-red);
+}
+
+.pcard__pill--cons {
+  border-color: rgba(145, 70, 255, 0.35);
+}
+.pcard__pill--cons .pcard__pill-value {
+  color: var(--c-twitch);
+}
+
+/* Tournament reach bars */
+
+.pcard__reach {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
+  min-width: 220px;
+}
+
+.pcard__reach-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pcard__reach-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text-dim);
+  width: 56px;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+
+.pcard__reach-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--c-border);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.pcard__reach-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.pcard__reach-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--c-text);
+  width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Meta grid */
+
+.pcard__meta {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 6px 20px;
+  align-content: start;
+}
+
+.pcard__meta-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--c-text-dim);
+}
+
+.pcard__meta-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
    Reduced motion — respect user preference
 ---------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {

@@ -11,8 +11,9 @@ import { useBracketExport } from './export/useBracketExport';
 import { LockCountdown } from './ui/LockCountdown';
 import { useLeaderboard } from './leaderboard/useLeaderboard';
 import { LeaderboardPanel } from './leaderboard/LeaderboardPanel';
+import { PlayersView } from './players/PlayersView';
 
-type View = 'live' | 'predictions';
+type View = 'live' | 'predictions' | 'players';
 
 /**
  * Phase 7 — User Predictions.
@@ -79,6 +80,10 @@ export default function App() {
     if (view === 'predictions' && !user) setView('live');
   }, [view, user]);
 
+  // Hide the export button on the Players tab — there's no bracket there.
+  const showExportButton =
+    view !== 'players' && bracket.matches.length > 0 && (view === 'live' || !!user);
+
   return (
     <div className="min-h-full">
       <div className="max-w-[1600px] mx-auto px-6 pt-6">
@@ -113,7 +118,9 @@ export default function App() {
             >
               {view === 'live'
                 ? `${completedCount}/${totalMatches} matches resolved`
-                : `${predictions.predictionMap.size} picks · ${predictions.correctCount}/${predictions.resolvedCount} correct`}
+                : view === 'predictions'
+                  ? `${predictions.predictionMap.size} picks · ${predictions.correctCount}/${predictions.resolvedCount} correct`
+                  : '32 qualified players'}
             </span>
           </div>
 
@@ -163,7 +170,7 @@ export default function App() {
               />
             )}
 
-            {bracket.matches.length > 0 && (view === 'live' || user) && (
+            {showExportButton && (
               <button
                 onClick={handleExport}
                 disabled={exporter.status === 'working'}
@@ -242,8 +249,11 @@ export default function App() {
         </div>
       )}
 
+      {/* Players tab — static stat cards for all 32 qualifiers */}
+      {view === 'players' && <PlayersView />}
+
       {/* Bracket canvas (horizontally scrollable) */}
-      {bracket.matches.length > 0 && (view === 'live' || user) && (
+      {view !== 'players' && bracket.matches.length > 0 && (view === 'live' || user) && (
         <div className="overflow-x-auto pb-12">
           <div className="scroll-hint">← Scroll horizontally to see the full bracket →</div>
           <div
@@ -352,6 +362,12 @@ function ViewTabs({
         title={!isLoggedIn ? 'Sign in with Twitch to predict' : undefined}
       >
         My Predictions
+      </button>
+      <button
+        onClick={() => onChange('players')}
+        style={baseTab(view === 'players')}
+      >
+        Players
       </button>
     </div>
   );

@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAGEBAIT — DRL Season 2 Playoffs</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  /* ── Exact RAGEBAIT colour tokens ── */
+  :root {
+    --bg:       #0d0d0b;
+    --surface:  #131310;
+    --surface2: #1a1a16;
+    --border:   #2a2a22;
+    --border2:  #3a3a2e;
+    --text:     #ede8d8;
+    --muted:    #7a7060;
+    --accent:   #c8a96e;
+    --accent2:  #9b6fff;
+    --gold-hi:  #f0c060;
+    --gold-mid: #c8963c;
+    --gold-lo:  #8a6428;
+    --red-hi:   #e05a5a;
+    --red-lo:   #9a3030;
+    --winners:  #4a9f6a;
+    --losers:   #c85a5a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 2rem 2rem 1.25rem;
+    border-bottom: 1px solid var(--border2);
+  }
+  .header-bar { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 31px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .season-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    flex-shrink: 0;
+    align-self: center;
+    max-width: 120px;
+    text-align: center;
+  }
+  .sub { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); line-height: 1.7; letter-spacing: 0.01em; }
+  .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #4a3020; letter-spacing: 0.01em; margin-top: 2px; }
+  .meta span { color: var(--accent); }
+
+  /* ── Tab bar ── */
+  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border2); padding: 0 2rem; overflow-x: auto; scrollbar-width: none; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); background: transparent; border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 20px; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Round selector ── */
+  .bracket-controls { display: flex; align-items: center; gap: 6px; padding: 1rem 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .rbtn {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    padding: 6px 14px; border: 1px solid var(--border2); border-radius: 2px;
+    background: transparent; color: var(--muted); cursor: pointer;
+    letter-spacing: 0.04em; text-transform: uppercase; transition: all 0.15s; white-space: nowrap;
+  }
+  .rbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .rbtn.active { background: var(--accent); color: #0d0d0b; border-color: var(--accent); font-weight: 500; }
+  .bracket-meta { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ── Shared content wrapper — max-width on all panels ── */
+  .content-wrap { max-width: 1100px; margin: 0 auto; }
+
+  /* ── Bracket area ── */
+  .bracket-area { padding: 1.75rem 2rem 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto; }
+  .bracket-area.single-col { grid-template-columns: 1fr; }
+
+  /* Section titles — bumped up per request */
+  .bsect-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border2);
+    color: var(--muted);
+  }
+  .bsect-title.winners { color: var(--winners); border-bottom-color: var(--winners); }
+  .bsect-title.losers  { color: var(--losers);  border-bottom-color: var(--losers); }
+  .bsect-title.grand   { color: var(--gold-hi); border-bottom-color: var(--gold-mid); }
+
+  /* Match cards */
+  .match-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: border-color 0.15s; }
+  .match-card:hover { border-color: var(--border2); }
+  .match-hdr { background: var(--surface2); padding: 3px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+  .match-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+  .bracket-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 5px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .bracket-badge.wr { background: rgba(74,159,106,0.15); color: var(--winners); }
+  .bracket-badge.lr { background: rgba(200,90,90,0.15);  color: var(--losers); }
+  .bracket-badge.gf { background: rgba(240,192,96,0.12); color: var(--gold-hi); }
+
+  /* Date chip in match header */
+  .match-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(200,169,110,0.1);
+    border: 1px solid rgba(200,169,110,0.25);
+    border-radius: 2px;
+    padding: 1px 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .match-player { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  .match-player:last-child { border-bottom: none; }
+  .match-player:hover { background: var(--surface2); }
+  .pseed { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); width: 20px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .pname-link { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; flex: 1; transition: color 0.12s; letter-spacing: -0.01em; }
+  .pname-link:hover { color: var(--accent); }
+  .pscore-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; padding: 1px 5px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .ptbd { color: var(--muted); font-style: italic; font-family: 'JetBrains Mono', monospace; font-size: 12px; flex: 1; letter-spacing: 0.02em; }
+  .twitch-link { display: flex; align-items: center; color: #9146ff; text-decoration: none; opacity: 0.45; transition: opacity 0.12s; flex-shrink: 0; }
+  .twitch-link:hover { opacity: 1; }
+  .twitch-icon { width: 13px; height: 13px; }
+
+  /* Win probability + odds bar under each player row */
+  .odds-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 6px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .odds-row:last-child { border-bottom: none; }
+  .odds-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    min-width: 34px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .odds-bar-wrap { flex: 1; height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .odds-bar-fill  { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.3s; }
+  .odds-american {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 42px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .odds-american.pos { color: var(--winners); }
+  .odds-american.neg { color: var(--losers); }
+  .odds-american.even { color: var(--accent); }
+  .odds-row { gap: 6px; }
+  .spread-pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; }
+  .spread-fav  { color: var(--gold-hi); }
+  .spread-dog  { color: #8a6a1a; }
+
+  /* ── Players tab ── */
+  .players-area { padding: 1.5rem 2rem 3rem; max-width: 1100px; margin: 0 auto; }
+  .players-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 1rem; letter-spacing: 0.04em; }
+  /* Always 2 or 4 columns — never odd widths that leave awkward gaps */
+  .players-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 900px) { .players-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px)  { .players-grid { grid-template-columns: 1fr; } }
+
+  .pcard { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: border-color 0.15s; }
+  .pcard:hover { border-color: var(--border2); }
+  .pcard.open  { border-color: var(--accent2); grid-column: 1 / -1; }
+  /* When open, internal layout switches to side-by-side */
+  .pcard.open .pcard-detail { display: flex; flex-direction: row; gap: 28px; flex-wrap: wrap; }
+
+  .pcard-head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer; user-select: none; transition: background 0.1s; }
+  .pcard:hover .pcard-head { background: var(--surface2); }
+  .pcard.open  .pcard-head { background: #1a1428; }
+
+  .pcard-expand { font-size: 10px; color: var(--muted); transition: transform 0.2s cubic-bezier(.4,0,.2,1), color 0.15s; flex-shrink: 0; }
+  .pcard.open  .pcard-expand { transform: rotate(90deg); color: var(--accent2); }
+  .pcard:hover .pcard-expand { color: var(--accent); }
+
+  .pcard-rank { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); width: 22px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .pcard-rank.top16 { color: var(--gold-hi); font-weight: 500; }
+  .pcard-info { flex: 1; min-width: 0; }
+  .pcard-name { font-weight: 500; font-size: 15px; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pcard-sub  { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .pcard-bracket { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; letter-spacing: 0.06em; text-transform: uppercase; }
+  .pcard-bracket.winners { background: rgba(74,159,106,0.15); color: var(--winners); }
+  .pcard-bracket.losers  { background: rgba(200,90,90,0.15);  color: var(--losers); }
+
+  .pcard-detail { display: none; padding: 16px 14px; background: #111118; border-top: 1px solid var(--border); border-left: 2px solid var(--accent2); }
+
+  .detail-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .seed-bars { display: flex; gap: 5px; align-items: flex-end; }
+  .seed-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; justify-content: flex-end; }
+  .seed-bar-outer { width: 24px; height: 64px; background: var(--border); border-radius: 2px; display: flex; align-items: flex-end; overflow: hidden; }
+  .seed-bar-inner { width: 100%; border-radius: 2px; }
+  .seed-bar-score { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); font-variant-numeric: tabular-nums; font-weight: 500; }
+  .seed-bar-lbl   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.02em; }
+  .seed-bar-null-outer { width: 24px; height: 64px; background: transparent; border: 1px dashed var(--border2); border-radius: 2px; }
+
+  .stat-grid { display: grid; grid-template-columns: auto auto; gap: 4px 20px; }
+  .stat-key { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  /* RAGEBAIT model stat pills */
+  .model-stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .stat-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 5px 10px;
+    min-width: 72px;
+    gap: 2px;
+  }
+  .stat-pill-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .stat-pill-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-pill-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .stat-pill.rage  { border-color: rgba(240,192,96,0.3); }
+  .stat-pill.rage  .stat-pill-value { color: var(--gold-hi); }
+  .stat-pill.bait  { border-color: rgba(200,90,90,0.3); }
+  .stat-pill.bait  .stat-pill-value { color: var(--losers); }
+  .stat-pill.cons  { border-color: rgba(155,111,255,0.3); }
+  .stat-pill.cons  .stat-pill-value { color: var(--accent2); }
+  .reach-bars { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+  .reach-row  { display: flex; align-items: center; gap: 8px; }
+  .reach-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); width: 52px; flex-shrink: 0; letter-spacing: 0.03em; }
+  .reach-bar-outer { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .reach-bar-inner { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+  .reach-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text); width: 36px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .mock-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1px 5px;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+    align-self: flex-start;
+  }
+
+  /* Flag icons — don't override font-size, the library uses it for sizing.
+     Only add non-conflicting properties globally. */
+  .fi { border-radius: 2px; }
+
+  /* Player card avatar */
+  .pcard-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pcard-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+  }
+  /* Small flag + country row in card head */
+  .pcard-country {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+  .pcard-country > .fi {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 11px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+  /* Inline flag wrapper for bracket tab — constrains fi element size without extra class */
+  .flag-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 13px;
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0.85;
+    vertical-align: middle;
+  }
+  /* Override the library's own em-based sizing inside our container */
+  .flag-inline > .fi {
+    display: block !important;
+    width: 18px !important;
+    height: 13px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    font-size: 0 !important;
+    flex-shrink: 0;
+  }
+  .filler-layout { padding: 1.5rem 2rem 3rem; display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; max-width: 1100px; margin: 0 auto; }
+
+  .progress-wrap { margin-bottom: 1.25rem; }
+  .progress-lbl { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.04em; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+  .reset-btn { background: transparent; border: 1px solid var(--border2); border-radius: 2px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 3px 10px; cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase; transition: all 0.15s; }
+  .reset-btn:hover { border-color: var(--red-hi); color: var(--red-hi); }
+  .progress-bar-bg { background: var(--border2); border-radius: 2px; height: 5px; overflow: hidden; }
+  .progress-bar-fill { height: 5px; border-radius: 2px; background: linear-gradient(90deg, var(--gold-hi), var(--gold-mid)); transition: width 0.3s ease; }
+
+  .fill-section { margin-bottom: 1.5rem; }
+  .fill-sect-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); color: var(--muted); }
+  .fill-sect-title.winners { color: var(--winners); border-bottom-color: var(--winners); }
+  .fill-sect-title.losers  { color: var(--losers);  border-bottom-color: var(--losers); }
+  .fill-sect-title.grand   { color: var(--gold-hi); border-bottom-color: var(--gold-mid); }
+
+  .fill-match { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 7px; overflow: hidden; }
+  .fill-match-hdr { background: var(--surface2); padding: 3px 12px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .fill-match-hdr .picked { color: var(--accent); }
+  .fill-players { display: grid; grid-template-columns: 1fr 1fr; }
+  .fill-pbtn { background: none; border: none; border-right: 1px solid var(--border); color: var(--text); cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; padding: 9px 12px; text-align: left; transition: background 0.12s, color 0.12s; display: flex; align-items: center; gap: 6px; letter-spacing: -0.01em; }
+  .fill-pbtn:last-child { border-right: none; }
+  .fill-pbtn:hover:not(.tbd) { background: var(--surface2); }
+  .fill-pbtn.selected { background: rgba(200,169,110,0.12); color: var(--accent); font-weight: 600; }
+  .fill-pbtn.tbd { color: var(--muted); font-style: italic; cursor: default; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .fill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; display: none; }
+  .fill-pbtn.selected .fill-dot { display: block; }
+  .fill-seed { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .gf-card { background: var(--surface); border: 1px solid var(--gold-mid); border-radius: 4px; padding: 1.25rem; margin-top: 1rem; text-align: center; }
+  .gf-card-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-hi); margin-bottom: 12px; }
+  .gf-matchup { display: flex; align-items: center; justify-content: center; gap: 1rem; font-size: 1.1rem; font-weight: 600; }
+  .gf-name { color: var(--gold-hi); }
+  .gf-tbd  { color: var(--muted); font-style: italic; font-size: 0.95rem; }
+  .gf-vs   { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .gf-note { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* Export panel */
+  .export-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1.25rem; position: sticky; top: 1rem; }
+  .export-panel h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 1rem; }
+  .export-btn { width: 100%; background: var(--accent); border: none; border-radius: 2px; color: #0d0d0b; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; padding: 10px; cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: opacity 0.15s; margin-bottom: 8px; }
+  .export-btn:hover { opacity: 0.85; }
+  .export-note { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.7; letter-spacing: 0.02em; }
+  #export-canvas { display: none; }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .bracket-area { grid-template-columns: 1fr; }
+    .filler-layout { grid-template-columns: 1fr; }
+    .export-panel { position: static; }
+  }
+
+  footer { border-top: 1px solid var(--border2); padding: 1.25rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4a3020; letter-spacing: 0.06em; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-bar">
+    <h1>
+      <span style="color:var(--gold-hi)">R</span>andomized
+      <span style="color:var(--gold-hi)">A</span>ggregate
+      <span style="color:var(--gold-hi)">G</span>enerative
+      <span style="color:var(--gold-hi)">E</span>stimator for
+      <span style="color:var(--gold-hi)">B</span>ayesian
+      <span style="color:var(--gold-hi)">A</span>nalysis of
+      <span style="color:var(--gold-hi)">I</span>ndividual
+      <span style="color:var(--gold-hi)">T</span>arnished
+    </h1>
+    <span class="season-tag">DRL Season 2 Playoffs</span>
+  </div>
+  <div class="sub">Double-elimination playoffs · Top 32 qualifiers · April 2026</div>
+
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('bracket',this)">Matchups</button>
+  <button class="tab-btn" onclick="switchTab('players',this)">Players</button>
+  <button class="tab-btn" onclick="switchTab('filler',this)">Fill Your Bracket</button>
+</div>
+
+<!-- BRACKET -->
+<div id="panel-bracket" class="panel active">
+  <div class="bracket-controls">
+    <button class="rbtn active" onclick="setRound(0,this)">WR1 · LR1</button>
+    <button class="rbtn" onclick="setRound(1,this)">WQF · LR2</button>
+    <button class="rbtn" onclick="setRound(2,this)">WSF · LR3</button>
+    <button class="rbtn" onclick="setRound(3,this)">LR4 · LR5</button>
+    <button class="rbtn" onclick="setRound(4,this)">WF · LQF · LSF · LF</button>
+    <button class="rbtn" onclick="setRound(5,this)">Grand Final</button>
+    <span class="bracket-meta">Double Elimination · BO1 (GF: BO3)</span>
+  </div>
+  <div id="bracket-content" class="bracket-area"></div>
+</div>
+
+<!-- PLAYERS -->
+<div id="panel-players" class="panel">
+  <div class="players-area">
+    <div class="players-note">All 32 qualified players — click row to expand qualifier seed scores · purple icon links to Twitch</div>
+    <div class="players-grid" id="players-grid"></div>
+  </div>
+</div>
+
+<!-- FILL YOUR BRACKET -->
+<div id="panel-filler" class="panel">
+  <div class="filler-layout">
+    <div class="filler-main">
+      <div class="progress-wrap">
+        <div class="progress-lbl">
+          <span id="progress-lbl">0 / 31 matches picked</span>
+          <button class="reset-btn" onclick="resetPicks()">↺ Reset</button>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
+      </div>
+      <div id="fill-grid"></div>
+      <div class="gf-card">
+        <div class="gf-card-title">🏆 Your Grand Final</div>
+        <div class="gf-matchup">
+          <span id="gf-w" class="gf-tbd">?</span>
+          <span class="gf-vs">vs</span>
+          <span id="gf-l" class="gf-tbd">?</span>
+        </div>
+        <div class="gf-note">Winners finalist (starts 1-0) · Losers finalist</div>
+      </div>
+    </div>
+    <div>
+      <div class="export-panel">
+        <h3>↓ Export Bracket</h3>
+        <button class="export-btn" onclick="exportBracket()">Download PNG</button>
+        <div class="export-note">
+          Exports a full summary image of your bracket picks — both sides, all rounds, Grand Final included.<br><br>
+          Everything runs locally. Nothing is uploaded anywhere.
+        </div>
+        <canvas id="export-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  RAGEBAIT · DRL Season 2 Playoffs · <a href="https://drl.forsa.tv" target="_blank">drl.forsa.tv</a>
+</footer>
+
+<script>
+// ════════════════════════════ DATA ════════════════════════════
+
+const TWITCH = {
+  HooZher:'https://www.twitch.tv/HooZher',ironyeu:'https://www.twitch.tv/ironyeu',
+  Niorra:'https://www.twitch.tv/Niorra',AzaZ_ow:'https://www.twitch.tv/AzaZ_ow',
+  Kayjuro_:'https://www.twitch.tv/Kayjuro_',Rakushain_:'https://www.twitch.tv/Rakushain_',
+  psiphicode:'https://www.twitch.tv/psiphicode',Forsa:'https://www.twitch.tv/Forsa',
+  EnsgMaster:'https://www.twitch.tv/EnsgMaster',LazyHelios:'https://www.twitch.tv/LazyHelios',
+  GustafGabel:'https://www.twitch.tv/GustafGabel',poleuky:'https://www.twitch.tv/poleuky',
+  Pluryl:'https://www.twitch.tv/Pluryl',RomainJacques_:'https://www.twitch.tv/RomainJacques_',
+  jeffqed:'https://www.twitch.tv/jeffqed',rambler_ing:'https://www.twitch.tv/rambler_ing',
+  pirl_fresh:'https://www.twitch.tv/pirl_fresh',SeriousChallenges:'https://www.twitch.tv/SeriousChallenges',
+  wander652:'https://www.twitch.tv/wander652',consta_sama:'https://www.twitch.tv/consta_sama',
+  Typin__:'https://www.twitch.tv/Typin__',LilAggy:'https://www.twitch.tv/LilAggy',
+  Mokyx:'https://www.twitch.tv/Mokyx',NuclearPastaTom:'https://www.twitch.tv/NuclearPastaTom',
+  az_gar25:'https://www.twitch.tv/az_gar25',mr_dr_raven:'https://www.twitch.tv/mr_dr_raven',
+  Unlucked_Destro:'https://www.twitch.tv/Unlucked_Destro',Teddy59C:'https://www.twitch.tv/Teddy59C',
+  theMixed_:'https://www.twitch.tv/theMixed_',Owarida:'https://www.twitch.tv/Owarida',
+  RannisConsortBryan:'https://www.twitch.tv/RannisConsortBryan',Dagann_e:'https://www.twitch.tv/Dagann_e',
+};
+
+// [rank, name, total, s1..s8]  (null = not played)
+const PLAYER_DATA = [
+  [1,'HooZher',410,78,79,81,82,81,78,86,80],
+  [2,'ironyeu',407,79,78,83,84,25,30,83,8],
+  [3,'Niorra',394,78,38,78,79,75,73,84,43],
+  [4,'AzaZ_ow',393,36,29,80,80,75,72,80,78],
+  [5,'Kayjuro_',391,71,78,77,2,77,77,82,40],
+  [6,'Rakushain_',390,80,78,77,70,70,56,77,78],
+  [7,'psiphicode',387,74,78,76,77,74,70,82,7],
+  [8,'Forsa',380,70,73,80,77,76,74,0,15],
+  [9,'EnsgMaster',379,76,77,33,75,47,22,76,75],
+  [10,'LazyHelios',378,64,79,58,83,76,76,6,21],
+  [11,'GustafGabel',376,70,27,74,76,73,3,83,12],
+  [12,'poleuky',376,76,43,75,57,71,72,82,null],
+  [13,'Pluryl',370,12,68,77,57,78,77,55,70],
+  [14,'RomainJacques_',369,81,77,60,43,57,74,0,77],
+  [15,'jeffqed',368,78,72,59,43,13,25,83,76],
+  [16,'rambler_ing',368,50,0,74,74,69,67,80,71],
+  [17,'pirl_fresh',367,77,56,4,46,69,69,78,74],
+  [18,'SeriousChallenges',365,73,75,14,60,0,73,83,61],
+  [19,'wander652',365,68,21,72,1,73,10,78,74],
+  [20,'consta_sama',365,70,26,76,74,75,70,69,37],
+  [21,'Typin__',363,46,73,74,75,45,71,25,70],
+  [22,'LilAggy',362,24,13,65,74,71,67,85,23],
+  [23,'Mokyx',362,76,74,55,70,73,56,39,69],
+  [24,'NuclearPastaTom',361,80,8,45,81,46,20,81,73],
+  [25,'az_gar25',359,53,72,70,1,67,64,80,70],
+  [26,'mr_dr_raven',358,73,12,54,43,71,65,77,72],
+  [27,'Unlucked_Destro',357,6,69,71,73,70,51,74,13],
+  [28,'Teddy59C',353,72,74,38,61,69,7,77,1],
+  [29,'theMixed_',353,75,72,0,69,49,67,55,70],
+  [30,'Owarida',353,73,67,67,72,2,27,74,3],
+  [31,'RannisConsortBryan',350,75,71,69,63,2,52,72,57],
+  [32,'Dagann_e',349,45,64,73,69,68,63,75,16],
+];
+
+const BY_NAME = {};
+PLAYER_DATA.forEach(p => { BY_NAME[p[1]] = { rank:p[0], name:p[1], total:p[2], seeds:p.slice(3) }; });
+
+// ── Scheduled match dates (populated by script, manual otherwise) ──
+// Times are stored as UTC ISO strings; displayed in viewer's local timezone automatically.
+// The Python script will inject these from drl.forsa.tv/matches scraping.
+const MATCH_DATES_UTC = {
+  "W5": "2026-04-12T16:00:00Z",
+  "W2": "2026-04-12T19:00:00Z",
+  "W6": "2026-04-13T16:00:00Z",
+  "L3": "2026-04-15T14:30:00Z",
+  "L8": "2026-04-16T16:00:00Z",
+  "W1": "2026-04-16T20:00:00Z"
+};
+
+// Format a UTC ISO string into a readable local-time string for display
+function formatMatchDate(isoStr) {
+  const d = new Date(isoStr);
+  const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  const timeStr = d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_',' ');
+  return `${dateStr} · ${timeStr} (local)`;
+}
+
+// ── Win probabilities (mock — will be replaced by RAGEBAIT model output) ──
+// matchId → p1WinPct (0–100). p2 = 100 - p1.
+const MATCH_ODDS = {
+  "W1": {
+    "p1Win": 0.7707,
+    "spread": 7.5
+  },
+  "W2": {
+    "p1Win": 0.3607,
+    "spread": -2.5
+  },
+  "W3": {
+    "p1Win": 0.4828,
+    "spread": 0.5
+  },
+  "W4": {
+    "p1Win": 0.4106,
+    "spread": -1.5
+  },
+  "W5": {
+    "p1Win": 0.443,
+    "spread": -1.5
+  },
+  "W6": {
+    "p1Win": 0.5676,
+    "spread": 2.5
+  },
+  "W7": {
+    "p1Win": 0.404,
+    "spread": -2.5
+  },
+  "W8": {
+    "p1Win": 0.5196,
+    "spread": 1.5
+  },
+  "L1": {
+    "p1Win": 0.597,
+    "spread": 3.5
+  },
+  "L2": {
+    "p1Win": 0.5988,
+    "spread": 4.5
+  },
+  "L3": {
+    "p1Win": 0.4538,
+    "spread": -1.5
+  },
+  "L4": {
+    "p1Win": 0.5955,
+    "spread": 3.5
+  },
+  "L5": {
+    "p1Win": 0.5727,
+    "spread": 2.5
+  },
+  "L6": {
+    "p1Win": 0.626,
+    "spread": 4.5
+  },
+  "L7": {
+    "p1Win": 0.5615,
+    "spread": 2.5
+  },
+  "L8": {
+    "p1Win": 0.6222,
+    "spread": 5.5
+  }
+};
+
+// ── Player model stats (mock — will be derived from RAGEBAIT simulation) ──
+// rage: 72–83 (compressed qualifier score), bait: 1–5 (collapse risk), cons: 0–1 (consistency)
+const PLAYER_STATS = {
+  "HooZher": {
+    "rage": 83.0,
+    "bait": 1.0,
+    "cons": 0.96,
+    "reach": {
+      "top16": 0.9641,
+      "top8": 0.6903,
+      "top4": 0.5238,
+      "finalist": 0.3561,
+      "champion": 0.224
+    }
+  },
+  "ironyeu": {
+    "rage": 82.6,
+    "bait": 3.7,
+    "cons": 0.96,
+    "reach": {
+      "top16": 0.8886,
+      "top8": 0.6552,
+      "top4": 0.3807,
+      "finalist": 0.2206,
+      "champion": 0.1262
+    }
+  },
+  "Niorra": {
+    "rage": 81.0,
+    "bait": 2.7,
+    "cons": 0.94,
+    "reach": {
+      "top16": 0.8134,
+      "top8": 0.5803,
+      "top4": 0.289,
+      "finalist": 0.143,
+      "champion": 0.0687
+    }
+  },
+  "AzaZ_ow": {
+    "rage": 80.4,
+    "bait": 3.5,
+    "cons": 0.97,
+    "reach": {
+      "top16": 0.7667,
+      "top8": 0.3207,
+      "top4": 0.1719,
+      "finalist": 0.0869,
+      "champion": 0.0408
+    }
+  },
+  "Kayjuro_": {
+    "rage": 78.8,
+    "bait": 2.0,
+    "cons": 0.96,
+    "reach": {
+      "top16": 0.8251,
+      "top8": 0.3721,
+      "top4": 0.2204,
+      "finalist": 0.1072,
+      "champion": 0.0496
+    }
+  },
+  "Rakushain_": {
+    "rage": 79.9,
+    "bait": 1.1,
+    "cons": 0.98,
+    "reach": {
+      "top16": 0.7965,
+      "top8": 0.5057,
+      "top4": 0.2393,
+      "finalist": 0.1087,
+      "champion": 0.0507
+    }
+  },
+  "psiphicode": {
+    "rage": 77.7,
+    "bait": 1.0,
+    "cons": 0.95,
+    "reach": {
+      "top16": 0.7786,
+      "top8": 0.4564,
+      "top4": 0.1699,
+      "finalist": 0.0682,
+      "champion": 0.0269
+    }
+  },
+  "Forsa": {
+    "rage": 78.1,
+    "bait": 2.8,
+    "cons": 0.95,
+    "reach": {
+      "top16": 0.7525,
+      "top8": 0.2713,
+      "top4": 0.1519,
+      "finalist": 0.0656,
+      "champion": 0.0285
+    }
+  },
+  "EnsgMaster": {
+    "rage": 77.5,
+    "bait": 2.9,
+    "cons": 0.98,
+    "reach": {
+      "top16": 0.8452,
+      "top8": 0.4175,
+      "top4": 0.1846,
+      "finalist": 0.0684,
+      "champion": 0.0249
+    }
+  },
+  "LazyHelios": {
+    "rage": 80.5,
+    "bait": 2.9,
+    "cons": 0.89,
+    "reach": {
+      "top16": 0.8734,
+      "top8": 0.6306,
+      "top4": 0.3626,
+      "finalist": 0.197,
+      "champion": 0.103
+    }
+  },
+  "GustafGabel": {
+    "rage": 78.4,
+    "bait": 3.8,
+    "cons": 0.91,
+    "reach": {
+      "top16": 0.8351,
+      "top8": 0.489,
+      "top4": 0.1795,
+      "finalist": 0.0727,
+      "champion": 0.0281
+    }
+  },
+  "poleuky": {
+    "rage": 77.9,
+    "bait": 2.0,
+    "cons": 0.92,
+    "reach": {
+      "top16": 0.8003,
+      "top8": 0.3778,
+      "top4": 0.1929,
+      "finalist": 0.0819,
+      "champion": 0.0334
+    }
+  },
+  "Pluryl": {
+    "rage": 78.7,
+    "bait": 1.6,
+    "cons": 0.92,
+    "reach": {
+      "top16": 0.8523,
+      "top8": 0.4458,
+      "top4": 0.2477,
+      "finalist": 0.1318,
+      "champion": 0.0654
+    }
+  },
+  "RomainJacques_": {
+    "rage": 78.8,
+    "bait": 2.1,
+    "cons": 0.89,
+    "reach": {
+      "top16": 0.7524,
+      "top8": 0.5193,
+      "top4": 0.2523,
+      "finalist": 0.1181,
+      "champion": 0.0561
+    }
+  },
+  "jeffqed": {
+    "rage": 79.9,
+    "bait": 3.4,
+    "cons": 0.86,
+    "reach": {
+      "top16": 0.8152,
+      "top8": 0.5503,
+      "top4": 0.2629,
+      "finalist": 0.1279,
+      "champion": 0.06
+    }
+  },
+  "rambler_ing": {
+    "rage": 76.3,
+    "bait": 1.6,
+    "cons": 0.93,
+    "reach": {
+      "top16": 0.6394,
+      "top8": 0.1529,
+      "top4": 0.0696,
+      "finalist": 0.027,
+      "champion": 0.0097
+    }
+  },
+  "pirl_fresh": {
+    "rage": 75.2,
+    "bait": 1.9,
+    "cons": 0.91,
+    "reach": {
+      "top16": 0.2367,
+      "top8": 0.075,
+      "top4": 0.0109,
+      "finalist": 0.0013,
+      "champion": 0.0002
+    }
+  },
+  "SeriousChallenges": {
+    "rage": 78.2,
+    "bait": 2.8,
+    "cons": 0.87,
+    "reach": {
+      "top16": 0.2885,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "wander652": {
+    "rage": 76.4,
+    "bait": 3.8,
+    "cons": 0.93,
+    "reach": {
+      "top16": 0.2788,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "consta_sama": {
+    "rage": 75.4,
+    "bait": 2.2,
+    "cons": 0.94,
+    "reach": {
+      "top16": 0.1665,
+      "top8": 0.0686,
+      "top4": 0.0107,
+      "finalist": 0.0014,
+      "champion": 0.0001
+    }
+  },
+  "Typin__": {
+    "rage": 74.8,
+    "bait": 2.3,
+    "cons": 0.96,
+    "reach": {
+      "top16": 0.1593,
+      "top8": 0.049,
+      "top4": 0.0047,
+      "finalist": 0.0004,
+      "champion": 0.0
+    }
+  },
+  "LilAggy": {
+    "rage": 76.7,
+    "bait": 3.8,
+    "cons": 0.85,
+    "reach": {
+      "top16": 0.2454,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "Mokyx": {
+    "rage": 75.9,
+    "bait": 2.5,
+    "cons": 0.94,
+    "reach": {
+      "top16": 0.2207,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "NuclearPastaTom": {
+    "rage": 79.2,
+    "bait": 3.5,
+    "cons": 0.82,
+    "reach": {
+      "top16": 0.315,
+      "top8": 0.1858,
+      "top4": 0.0539,
+      "finalist": 0.0138,
+      "champion": 0.0035
+    }
+  },
+  "az_gar25": {
+    "rage": 75.5,
+    "bait": 1.4,
+    "cons": 0.91,
+    "reach": {
+      "top16": 0.1192,
+      "top8": 0.0426,
+      "top4": 0.0055,
+      "finalist": 0.0005,
+      "champion": 0.0
+    }
+  },
+  "mr_dr_raven": {
+    "rage": 73.9,
+    "bait": 2.2,
+    "cons": 0.92,
+    "reach": {
+      "top16": 0.1538,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "Unlucked_Destro": {
+    "rage": 72.6,
+    "bait": 3.0,
+    "cons": 0.95,
+    "reach": {
+      "top16": 0.151,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "Teddy59C": {
+    "rage": 75.7,
+    "bait": 3.5,
+    "cons": 0.89,
+    "reach": {
+      "top16": 0.1886,
+      "top8": 0.0673,
+      "top4": 0.0078,
+      "finalist": 0.001,
+      "champion": 0.0001
+    }
+  },
+  "theMixed_": {
+    "rage": 73.3,
+    "bait": 1.8,
+    "cons": 0.93,
+    "reach": {
+      "top16": 0.1298,
+      "top8": 0.0411,
+      "top4": 0.0045,
+      "finalist": 0.0004,
+      "champion": 0.0
+    }
+  },
+  "Owarida": {
+    "rage": 72.6,
+    "bait": 3.8,
+    "cons": 0.93,
+    "reach": {
+      "top16": 0.1235,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "RannisConsortBryan": {
+    "rage": 73.5,
+    "bait": 1.3,
+    "cons": 0.92,
+    "reach": {
+      "top16": 0.0926,
+      "top8": 0.0,
+      "top4": 0.0,
+      "finalist": 0.0,
+      "champion": 0.0
+    }
+  },
+  "Dagann_e": {
+    "rage": 72.0,
+    "bait": 1.8,
+    "cons": 0.91,
+    "reach": {
+      "top16": 0.1317,
+      "top8": 0.0352,
+      "top4": 0.0029,
+      "finalist": 0.0001,
+      "champion": 0.0
+    }
+  }
+};
+
+// ── Country codes from drl.forsa.tv (fi-XX flag-icons classes) ──
+const COUNTRY_CODES = {
+  HooZher:'us', ironyeu:'fr', Niorra:'fr', AzaZ_ow:'bg', Kayjuro_:'de',
+  Rakushain_:'fr', psiphicode:'us', Forsa:'fr', EnsgMaster:'fr', LazyHelios:'in',
+  GustafGabel:'de', poleuky:'fr', Pluryl:'us', RomainJacques_:'ch', jeffqed:'de',
+  rambler_ing:'br', pirl_fresh:'fr', SeriousChallenges:'de', wander652:'us',
+  consta_sama:'fr', Typin__:'fr', LilAggy:'us', Mokyx:'fr', NuclearPastaTom:'us',
+  az_gar25:'be', mr_dr_raven:'ua', Unlucked_Destro:'fr', Teddy59C:'fr',
+  theMixed_:'fr', Owarida:'fr', RannisConsortBryan:'ca', Dagann_e:'fr',
+};
+
+// Country display names for tooltip
+const COUNTRY_NAMES = {
+  us:'United States', fr:'France', bg:'Bulgaria', de:'Germany', in:'India',
+  ch:'Switzerland', br:'Brazil', be:'Belgium', ua:'Ukraine', ca:'Canada',
+};
+
+// ── Twitch avatars — injected by Python script via Twitch Helix API ──
+// Placeholder URLs used until script runs. Format: name → profile_image_url
+// The Python script will overwrite this entire object with real CDN URLs.
+const AVATARS = {
+  "HooZher": "https://static-cdn.jtvnw.net/jtv_user_pictures/57722e01-b76c-40f7-9cbe-ddecebf7a93a-profile_image-300x300.png",
+  "psiphicode": "https://static-cdn.jtvnw.net/jtv_user_pictures/1d89a77f-a860-400c-8e6e-15da4a865a22-profile_image-300x300.png",
+  "LazyHelios": "https://static-cdn.jtvnw.net/jtv_user_pictures/00d0b4f4-cc61-4e76-b091-fca868512f51-profile_image-300x300.png",
+  "Pluryl": "https://static-cdn.jtvnw.net/jtv_user_pictures/bffc54fb-1a72-4843-9638-5a2748816580-profile_image-300x300.png",
+  "jeffqed": "https://static-cdn.jtvnw.net/jtv_user_pictures/093a6e44-5722-4008-95e7-b9891dc61b64-profile_image-300x300.png",
+  "rambler_ing": "https://static-cdn.jtvnw.net/jtv_user_pictures/3a0a7945-3601-487d-bdf5-d05ad9e752af-profile_image-300x300.png",
+  "wander652": "https://static-cdn.jtvnw.net/jtv_user_pictures/ba3a0e62-62ea-443a-9678-ace27d847828-profile_image-300x300.png",
+  "Typin__": "https://static-cdn.jtvnw.net/jtv_user_pictures/94abf173-1e64-4195-aacf-07c50952638f-profile_image-300x300.png",
+  "Forsa": "https://static-cdn.jtvnw.net/jtv_user_pictures/069c93d6-1621-4069-9ffb-f2b8a155da24-profile_image-300x300.png",
+  "consta_sama": "https://static-cdn.jtvnw.net/jtv_user_pictures/f4cdc3ee-6f4f-4e3e-b69d-22801f3c810e-profile_image-300x300.png",
+  "az_gar25": "https://static-cdn.jtvnw.net/jtv_user_pictures/32dba766-7b6b-47e2-9720-62132cbd8ff4-profile_image-300x300.png",
+  "Teddy59C": "https://static-cdn.jtvnw.net/jtv_user_pictures/ea3895ab-b72b-4fb1-b80f-b37f10d42489-profile_image-300x300.jpeg",
+  "Owarida": "https://static-cdn.jtvnw.net/jtv_user_pictures/ab6c6e72-ed70-47f1-961a-823959d869c1-profile_image-300x300.png",
+  "Kayjuro_": "https://static-cdn.jtvnw.net/jtv_user_pictures/648dec7d-33b2-4c0b-ad52-243db443cd90-profile_image-300x300.png",
+  "NuclearPastaTom": "https://static-cdn.jtvnw.net/jtv_user_pictures/abf02e19-8839-46f0-993a-eecbfb4a5b16-profile_image-300x300.png",
+  "Dagann_e": "https://static-cdn.jtvnw.net/jtv_user_pictures/7c3127ff-4231-4d59-8f4c-5251a0bbdd4a-profile_image-300x300.png",
+  "Niorra": "https://static-cdn.jtvnw.net/jtv_user_pictures/4dfb1bea-26bb-40e0-8859-665ebb8ca524-profile_image-300x300.png",
+  "poleuky": "https://static-cdn.jtvnw.net/jtv_user_pictures/67350940-0323-4d5f-bc62-0678580e27f2-profile_image-300x300.png",
+  "pirl_fresh": "https://static-cdn.jtvnw.net/jtv_user_pictures/d6ffd53c-47c8-4a2b-b235-3c631af50896-profile_image-300x300.png",
+  "ironyeu": "https://static-cdn.jtvnw.net/jtv_user_pictures/ironyeu-profile_image-2f653f00f00de927-300x300.png",
+  "Rakushain_": "https://static-cdn.jtvnw.net/jtv_user_pictures/9ca63ff6-fef7-4f5c-aa33-7a43cb936f30-profile_image-300x300.png",
+  "EnsgMaster": "https://static-cdn.jtvnw.net/jtv_user_pictures/18955453-0bed-45ea-a06c-ec29f18c0e0e-profile_image-300x300.jpg",
+  "GustafGabel": "https://static-cdn.jtvnw.net/jtv_user_pictures/32733ea4-62c0-4189-b1f9-8c5e27657c33-profile_image-300x300.png",
+  "LilAggy": "https://static-cdn.jtvnw.net/jtv_user_pictures/5b85bd43-3b91-4fd2-bc8c-1e57cf85d643-profile_image-300x300.png",
+  "Unlucked_Destro": "https://static-cdn.jtvnw.net/jtv_user_pictures/unlucked_destro-profile_image-caa081e2ff019233-300x300.jpeg",
+  "theMixed_": "https://static-cdn.jtvnw.net/jtv_user_pictures/dcf7d386-4f97-4488-9445-6cf3a984545f-profile_image-300x300.png",
+  "AzaZ_ow": "https://static-cdn.jtvnw.net/jtv_user_pictures/2d0a5d82-34d2-4e9b-956c-f1246228617e-profile_image-300x300.png",
+  "RannisConsortBryan": "https://static-cdn.jtvnw.net/jtv_user_pictures/c5a87496-9b45-488f-84a2-4cbd52171c44-profile_image-300x300.png",
+  "RomainJacques_": "https://static-cdn.jtvnw.net/jtv_user_pictures/641b3b3b-1160-4201-8258-a45e47247d95-profile_image-300x300.png",
+  "SeriousChallenges": "https://static-cdn.jtvnw.net/jtv_user_pictures/5d2e98cb-0e33-4153-a9aa-db98c78219b7-profile_image-300x300.jpeg",
+  "Mokyx": "https://static-cdn.jtvnw.net/jtv_user_pictures/d336ad5c-af73-412c-be8c-9c8992a784d5-profile_image-300x300.png",
+  "mr_dr_raven": "https://static-cdn.jtvnw.net/jtv_user_pictures/a54cec84-2046-478f-a569-c2bf42ca108a-profile_image-300x300.png"
+};
+
+const W_R1 = [
+  {id:'W1',p1:{name:'HooZher',seed:1},   p2:{name:'rambler_ing',seed:16}},
+  {id:'W2',p1:{name:'Forsa',seed:8},     p2:{name:'EnsgMaster',seed:9}},
+  {id:'W3',p1:{name:'Kayjuro_',seed:5},  p2:{name:'poleuky',seed:12}},
+  {id:'W4',p1:{name:'AzaZ_ow',seed:4},   p2:{name:'Pluryl',seed:13}},
+  {id:'W5',p1:{name:'Rakushain_',seed:6},p2:{name:'GustafGabel',seed:11}},
+  {id:'W6',p1:{name:'Niorra',seed:3},    p2:{name:'RomainJacques_',seed:14}},
+  {id:'W7',p1:{name:'psiphicode',seed:7},p2:{name:'LazyHelios',seed:10}},
+  {id:'W8',p1:{name:'ironyeu',seed:2},   p2:{name:'jeffqed',seed:15}},
+];
+const L_R1 = [
+  {id:'L1',p1:{name:'pirl_fresh',seed:17},       p2:{name:'Dagann_e',seed:32}},
+  {id:'L2',p1:{name:'NuclearPastaTom',seed:24},  p2:{name:'az_gar25',seed:25}},
+  {id:'L3',p1:{name:'Typin__',seed:21},           p2:{name:'Teddy59C',seed:28}},
+  {id:'L4',p1:{name:'consta_sama',seed:20},       p2:{name:'theMixed_',seed:29}},
+  {id:'L5',p1:{name:'LilAggy',seed:22},           p2:{name:'Unlucked_Destro',seed:27}},
+  {id:'L6',p1:{name:'wander652',seed:19},         p2:{name:'Owarida',seed:30}},
+  {id:'L7',p1:{name:'Mokyx',seed:23},             p2:{name:'mr_dr_raven',seed:26}},
+  {id:'L8',p1:{name:'SeriousChallenges',seed:18}, p2:{name:'RannisConsortBryan',seed:31}},
+];
+
+// ── Losers R2 drop mapping: which W match loser feeds which L match slot
+// Based on official bracket: W5L→L9p1, W6L→L10p1, W7L→L11p1, W8L→L12p1,
+//                            W1L→L13p1, W2L→L14p1, W3L→L15p1, W4L→L16p1
+const W_LOSER_TO_L2 = {W5:'L9',W6:'L10',W7:'L11',W8:'L12',W1:'L13',W2:'L14',W3:'L15',W4:'L16'};
+// WQF loser drops: W9L→L21p1, W10L→L22p1, W11L→L23p1, W12L→L24p1
+const W_LOSER_TO_L4 = {W9:'L21',W10:'L22',W11:'L23',W12:'L24'};
+// WSF loser drops: W13L→L28p1, W14L→L27p1
+const W_LOSER_TO_LQF = {W13:'L28',W14:'L27'};
+// WF loser drops to LF
+const W_LOSER_TO_LF = {W15:'L30'};
+
+const ROUNDS = [
+  {left:[{title:'Winners Round 1',cls:'winners',badge:'wr',matches:W_R1}],
+   right:[{title:'Losers Round 1',cls:'losers',badge:'lr',matches:L_R1}]},
+  {left:[{title:'Winners Quarter-Finals',cls:'winners',badge:'wr',matches:[
+    {id:'W9',label:'W1 Winner vs W2 Winner'},{id:'W10',label:'W3 Winner vs W4 Winner'},
+    {id:'W11',label:'W5 Winner vs W6 Winner'},{id:'W12',label:'W7 Winner vs W8 Winner'},
+  ]}],
+   right:[{title:'Losers Round 2',cls:'losers',badge:'lr',matches:[
+    {id:'L9',label:'W5 Loser vs L1 Winner'},{id:'L10',label:'W6 Loser vs L2 Winner'},
+    {id:'L11',label:'W7 Loser vs L3 Winner'},{id:'L12',label:'W8 Loser vs L4 Winner'},
+    {id:'L13',label:'W1 Loser vs L5 Winner'},{id:'L14',label:'W2 Loser vs L6 Winner'},
+    {id:'L15',label:'W3 Loser vs L7 Winner'},{id:'L16',label:'W4 Loser vs L8 Winner'},
+  ]}]},
+  {left:[{title:'Winners Semi-Finals',cls:'winners',badge:'wr',matches:[
+    {id:'W13',label:'W9 Winner vs W10 Winner'},{id:'W14',label:'W11 Winner vs W12 Winner'},
+  ]}],
+   right:[{title:'Losers Round 3',cls:'losers',badge:'lr',matches:[
+    {id:'L17',label:'L9 Winner vs L10 Winner'},{id:'L18',label:'L11 Winner vs L12 Winner'},
+    {id:'L19',label:'L13 Winner vs L14 Winner'},{id:'L20',label:'L15 Winner vs L16 Winner'},
+  ]}]},
+  {left:[{title:'Losers Round 4',cls:'losers',badge:'lr',matches:[
+    {id:'L21',label:'W9 Loser vs L17 Winner'},{id:'L22',label:'W10 Loser vs L18 Winner'},
+    {id:'L23',label:'W11 Loser vs L19 Winner'},{id:'L24',label:'W12 Loser vs L20 Winner'},
+  ]}],
+   right:[{title:'Losers Round 5',cls:'losers',badge:'lr',matches:[
+    {id:'L25',label:'L21 Winner vs L22 Winner'},{id:'L26',label:'L23 Winner vs L24 Winner'},
+  ]}]},
+  {left:[{title:'Winners Final',cls:'winners',badge:'wr',matches:[{id:'W15',label:'W13 Winner vs W14 Winner'}]}],
+   right:[
+    {title:'Losers Quarter-Finals',cls:'losers',badge:'lr',matches:[
+      {id:'L27',label:'W14 Loser vs L25 Winner'},{id:'L28',label:'W13 Loser vs L26 Winner'},
+    ]},
+    {title:'Losers Semi-Final',cls:'losers',badge:'lr',matches:[{id:'L29',label:'L27 Winner vs L28 Winner'}]},
+    {title:'Losers Final',cls:'losers',badge:'lr',matches:[{id:'L30',label:'W15 Loser vs L29 Winner'}]},
+  ]},
+  {grand:true},
+];
+
+// ── Fill bracket sections (all 31 picks) ──
+// dep ending in _L = loser of that match
+const FILL_SECTIONS = [
+  {cls:'winners',title:'Winners Round 1',matches:W_R1.map(m=>({id:m.id,p1:m.p1.name,p2:m.p2.name,s1:m.p1.seed,s2:m.p2.seed}))},
+  {cls:'losers', title:'Losers Round 1', matches:L_R1.map(m=>({id:m.id,p1:m.p1.name,p2:m.p2.name,s1:m.p1.seed,s2:m.p2.seed}))},
+  {cls:'winners',title:'Winners Quarter-Finals',matches:[
+    {id:'W9',dep1:'W1',dep2:'W2'},{id:'W10',dep1:'W3',dep2:'W4'},
+    {id:'W11',dep1:'W5',dep2:'W6'},{id:'W12',dep1:'W7',dep2:'W8'},
+  ]},
+  {cls:'losers',title:'Losers Round 2',matches:[
+    {id:'L9', dep1:'W5_L',dep2:'L1'},{id:'L10',dep1:'W6_L',dep2:'L2'},
+    {id:'L11',dep1:'W7_L',dep2:'L3'},{id:'L12',dep1:'W8_L',dep2:'L4'},
+    {id:'L13',dep1:'W1_L',dep2:'L5'},{id:'L14',dep1:'W2_L',dep2:'L6'},
+    {id:'L15',dep1:'W3_L',dep2:'L7'},{id:'L16',dep1:'W4_L',dep2:'L8'},
+  ]},
+  {cls:'winners',title:'Winners Semi-Finals',matches:[
+    {id:'W13',dep1:'W9',dep2:'W10'},{id:'W14',dep1:'W11',dep2:'W12'},
+  ]},
+  {cls:'losers',title:'Losers Round 3',matches:[
+    {id:'L17',dep1:'L9',dep2:'L10'},{id:'L18',dep1:'L11',dep2:'L12'},
+    {id:'L19',dep1:'L13',dep2:'L14'},{id:'L20',dep1:'L15',dep2:'L16'},
+  ]},
+  {cls:'losers',title:'Losers Round 4',matches:[
+    {id:'L21',dep1:'W9_L',dep2:'L17'},{id:'L22',dep1:'W10_L',dep2:'L18'},
+    {id:'L23',dep1:'W11_L',dep2:'L19'},{id:'L24',dep1:'W12_L',dep2:'L20'},
+  ]},
+  {cls:'winners',title:'Winners Final',matches:[{id:'W15',dep1:'W13',dep2:'W14'}]},
+  {cls:'losers',title:'Losers Round 5',matches:[
+    {id:'L25',dep1:'L21',dep2:'L22'},{id:'L26',dep1:'L23',dep2:'L24'},
+  ]},
+  {cls:'losers',title:'Losers Quarter-Finals',matches:[
+    {id:'L27',dep1:'W14_L',dep2:'L25'},{id:'L28',dep1:'W13_L',dep2:'L26'},
+  ]},
+  {cls:'losers',title:'Losers Semi-Final',matches:[{id:'L29',dep1:'L27',dep2:'L28'}]},
+  {cls:'losers',title:'Losers Final',matches:[{id:'L30',dep1:'W15_L',dep2:'L29'}]},
+];
+const TOTAL_PICKS = FILL_SECTIONS.reduce((a,s)=>a+s.matches.length,0);
+
+// picks[matchId] = playerName string | null
+const picks = {};
+
+// ════════════════════════════ HELPERS ════════════════════════════
+
+function twitchSVG() {
+  return `<svg class="twitch-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>`;
+}
+
+function scoreColor(v) {
+  if (v === null || v === '' || v === 0) return '#3a3a2e';
+  const t = Math.max(0, Math.min(1, v / 88));
+  const r = Math.round(0x8a + t*(0xf0-0x8a));
+  const g = Math.round(0x64 + t*(0xc0-0x64));
+  const b = Math.round(0x28 + t*(0x60-0x28));
+  return `rgb(${r},${g},${b})`;
+}
+
+// Build a flat cache of match defs for quick lookup
+const _matchDefs = {};
+FILL_SECTIONS.forEach(s => s.matches.forEach(m => { _matchDefs[m.id] = m; }));
+
+// Resolve which player name occupies slot 'ref' given current picks
+// ref can be: a real player name, a match ID (=winner), or matchID_L (=loser)
+function resolveName(ref) {
+  if (!ref) return null;
+  if (ref.endsWith('_L')) {
+    const mid = ref.slice(0,-2);
+    const winner = picks[mid];
+    if (!winner) return null;
+    const mdef = _matchDefs[mid];
+    if (!mdef) return null;
+    const rp1 = resolveName(mdef.p1 !== undefined ? mdef.p1 : mdef.dep1);
+    const rp2 = resolveName(mdef.p2 !== undefined ? mdef.p2 : mdef.dep2);
+    if (winner === rp1) return rp2;
+    if (winner === rp2) return rp1;
+    return null;
+  }
+  // Match ID → winner
+  if (_matchDefs[ref]) return picks[ref] || null;
+  // Plain player name
+  return ref;
+}
+
+// ════════════════════════════ TABS ════════════════════════════
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════════════════════════════ BRACKET TAB ════════════════════════════
+
+let currentRound = 0;
+function setRound(idx, btn) {
+  currentRound = idx;
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBracket();
+}
+
+// Convert true probability (0–1) to American odds string
+function toAmerican(p) {
+  if (p <= 0 || p >= 1) return '—';
+  if (Math.abs(p - 0.5) < 0.001) return 'EVEN';
+  if (p > 0.5) {
+    const odds = Math.round(-(p / (1 - p)) * 100);
+    return odds.toString(); // e.g. -175
+  } else {
+    const odds = Math.round(((1 - p) / p) * 100);
+    return '+' + odds; // e.g. +200
+  }
+}
+
+function oddsClass(american) {
+  if (american === 'EVEN') return 'even';
+  if (american.startsWith('+')) return 'pos';
+  return 'neg';
+}
+
+function playerRow(p, matchId, isP1) {
+  const tw = TWITCH[p.name];
+  const pd = BY_NAME[p.name];
+  const cc = COUNTRY_CODES[p.name];
+  const avatarUrl = AVATARS[p.name];
+  const initials = p.name.slice(0,2).toUpperCase();
+  const FI_INLINE_STYLE = 'display:block;width:18px;height:13px;background-size:cover;background-position:center;font-size:0;flex-shrink:0;';
+  const flagHtml = cc ? `<span class="flag-inline"><span class="fi fi-${cc}" title="${COUNTRY_NAMES[cc]||cc.toUpperCase()}" style="${FI_INLINE_STYLE}"></span></span>` : '';
+  const avatarStyle = 'display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);flex-shrink:0;overflow:hidden;font-family:JetBrains Mono,monospace;font-size:8px;font-weight:500;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;';
+  const avatarHtml = avatarUrl
+    ? `<div style="${avatarStyle}"><img src="${avatarUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;" onerror="this.parentElement.textContent='${initials}'"></div>`
+    : `<div style="${avatarStyle}">${initials}</div>`;
+  const oddsData = MATCH_ODDS[matchId];
+  let oddsHtml = '';
+  if (oddsData !== undefined) {
+    const p1Win = typeof oddsData === 'object' ? oddsData.p1Win : oddsData / 100;
+    const spread = typeof oddsData === 'object' ? oddsData.spread : null;
+    const pct = Math.round((isP1 ? p1Win : 1 - p1Win) * 100);
+    let spreadHtml = '';
+    if (spread !== null) {
+      // Sports convention: favorite is negative, underdog is positive
+      // spread stored as p1 - p2 median diff, shaded by 0.5
+      // So p1 spread = -spread (favorite has negative), p2 spread = +spread
+      const playerSpread = isP1 ? -spread : spread;
+      const spreadStr = playerSpread > 0 ? `+${playerSpread.toFixed(1)}` : playerSpread.toFixed(1);
+      const spreadCls = playerSpread > 0 ? 'spread-dog' : 'spread-fav';
+      spreadHtml = `<span class="spread-pill ${spreadCls}">${spreadStr}</span>`;
+    }
+    oddsHtml = `<div class="odds-row">
+      <span class="odds-pct">${pct}%</span>
+      <div class="odds-bar-wrap"><div class="odds-bar-fill" style="width:${pct}%"></div></div>
+      ${spreadHtml}
+    </div>`;
+  }
+  const ms = PLAYER_STATS[p.name] || {};
+  const expandId = `bexp_${matchId}_${isP1?'p1':'p2'}`;
+  const miniStats = ms.rage !== undefined ? `
+    <div class="bracket-mini-stats" id="${expandId}" style="display:none;padding:8px 12px 10px;border-top:1px solid var(--border);background:var(--surface2);">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+        ${avatarUrl ? `<img src="${avatarUrl}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--border2);" onerror="this.style.display='none'">` : `<div style="width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--accent);">${initials}</div>`}
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--text)">${p.name}</div>
+          ${tw ? `<a href="${tw}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;" onclick="event.stopPropagation()">Twitch ↗</a>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 4px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:2px;">RAGE</div>
+          <div style="font-size:14px;font-weight:500;color:var(--gold-hi)">${ms.rage?.toFixed(1)||'—'}</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 4px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:2px;">BAIT</div>
+          <div style="font-size:14px;font-weight:500;color:var(--losers)">${ms.bait?.toFixed(1)||'—'}</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 4px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:2px;">CONS</div>
+          <div style="font-size:14px;font-weight:500;color:var(--accent2)">${ms.cons?.toFixed(2)||'—'}</div>
+        </div>
+      </div>
+    </div>` : '';
+  return `<div class="match-player" onclick="toggleBracketExpand('${expandId}')" style="cursor:pointer;">
+    <span class="pseed">${p.seed}</span>
+    ${avatarHtml}
+    ${flagHtml}
+    <span class="pname-link">${p.name}</span>
+    ${pd ? `<span class="pscore-badge">${pd.total}</span>` : ''}
+    ${tw ? `<a href="${tw}" target="_blank" class="twitch-link" onclick="event.stopPropagation()">${twitchSVG()}</a>` : ''}
+  </div>${oddsHtml}${miniStats}`;
+}
+function tbdRow(lbl) {
+  return `<div class="match-player"><span class="ptbd">${lbl}</span></div>`;
+}
+function matchCard(m, badge) {
+  const hasPlayers = !!m.p1;
+  const dateIso = MATCH_DATES_UTC[m.id];
+  const dateChip = dateIso ? `<span class="match-date">${formatMatchDate(dateIso)}</span>` : '';
+  const body = hasPlayers
+    ? playerRow(m.p1, m.id, true) + playerRow(m.p2, m.id, false)
+    : tbdRow(m.label||m.id);
+  return `<div class="match-card">
+    <div class="match-hdr">
+      <span class="match-id">Match ${m.id}</span>
+      ${dateChip}
+      <span class="bracket-badge ${badge}">${badge==='wr'?'W':badge==='lr'?'L':'GF'}</span>
+    </div>${body}
+  </div>`;
+}
+function sortedMatches(matches) {
+  const scheduled = matches.filter(m=>MATCH_DATES_UTC[m.id]).sort((a,b)=>
+    new Date(MATCH_DATES_UTC[a.id]) - new Date(MATCH_DATES_UTC[b.id])
+  );
+  const unscheduled = matches.filter(m=>!MATCH_DATES_UTC[m.id]);
+  return [...scheduled, ...unscheduled];
+}
+function renderSections(sects) {
+  return sects.map(s=>`<div>
+    <div class="bsect-title ${s.cls}">${s.title}</div>
+    ${sortedMatches(s.matches).map(m=>matchCard(m,s.badge)).join('')}
+  </div>`).join('');
+}
+
+function renderBracket() {
+  const r = ROUNDS[currentRound];
+  const el = document.getElementById('bracket-content');
+  if (r.grand) {
+    el.className = 'bracket-area single-col';
+    el.innerHTML = `<div>
+      <div class="bsect-title grand">Grand Final — BO3 · Winners finalist starts 1-0</div>
+      <div class="match-card" style="max-width:460px;margin:0 auto">
+        <div class="match-hdr"><span class="match-id">Grand Final</span><span class="bracket-badge gf">GF</span></div>
+        ${tbdRow('W15 Winner — Winners Finalist')}
+        ${tbdRow('L30 Winner — Losers Finalist')}
+      </div>
+      <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);text-align:center;line-height:1.8">
+        Best-of-3 series · Winners finalist begins with a 1-0 lead<br>
+        Losers finalist must win 2 consecutive games to claim the championship
+      </div>
+    </div>`;
+    return;
+  }
+  el.className = 'bracket-area';
+  el.innerHTML = `<div>${renderSections(r.left)}</div><div>${renderSections(r.right)}</div>`;
+}
+
+// ════════════════════════════ PLAYERS TAB ════════════════════════════
+
+function renderPlayers() {
+  const grid = document.getElementById('players-grid');
+  grid.innerHTML = PLAYER_DATA.map(p => {
+    const name=p[1], rank=p[0], total=p[2];
+    const seeds=p.slice(3);
+    const tw=TWITCH[name];
+    const isW=rank<=16;
+    const id=`pc_${name.replace(/[^a-z0-9]/gi,'_')}`;
+    const ms = PLAYER_STATS[name] || { rage:50, bait:5, cons:0.5 };
+    const cc = COUNTRY_CODES[name];
+    const avatarUrl = AVATARS[name];
+    const initials = name.slice(0,2).toUpperCase();
+
+    const FI_CARD_STYLE = 'display:inline-block;width:16px;height:11px;background-size:cover;background-position:center;border-radius:1px;flex-shrink:0;';
+    const avatarStyle = 'display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);flex-shrink:0;overflow:hidden;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:500;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;';
+
+    // Avatar: real URL from script, or initials placeholder
+    const avatarHtml = avatarUrl
+      ? `<div style="${avatarStyle}"><img src="${avatarUrl}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;" onerror="this.parentElement.textContent='${initials}'"></div>`
+      : `<div style="${avatarStyle}">${initials}</div>`;
+
+    // Flag + country name
+    const countryHtml = cc
+      ? `<div class="pcard-country"><span class="fi fi-${cc}" style="${FI_CARD_STYLE}" title="${COUNTRY_NAMES[cc]||cc.toUpperCase()}"></span>${COUNTRY_NAMES[cc]||cc.toUpperCase()}</div>`
+      : '';
+
+    // Best seed: highest score and which seed number (1-indexed)
+    let bestScore = -1, bestSeedIdx = -1;
+    seeds.forEach((s,i) => { if (s !== null && s !== '' && s > bestScore) { bestScore = s; bestSeedIdx = i; } });
+    const bestSeedStr = bestScore > 0 ? `${bestScore} · Seed ${bestSeedIdx+1}` : '—';
+
+    const bars = seeds.map((s,i)=>{
+      if (s===null||s==='') return `<div class="seed-bar-wrap"><div class="seed-bar-null-outer"></div><div class="seed-bar-score" style="color:var(--muted)">—</div><div class="seed-bar-lbl">S${i+1}</div></div>`;
+      const h=Math.round((Math.max(0,s)/88)*64);
+      const isBest = (i === bestSeedIdx);
+      return `<div class="seed-bar-wrap">
+        <div class="seed-bar-outer" style="${isBest?'box-shadow:0 0 0 1px var(--gold-hi)':''}">
+          <div class="seed-bar-inner" style="height:${h}px;background:${isBest?'var(--gold-hi)':scoreColor(s)}"></div>
+        </div>
+        <div class="seed-bar-score" style="${isBest?'color:var(--gold-hi)':''}">${s}</div>
+        <div class="seed-bar-lbl">S${i+1}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="pcard" id="${id}">
+      <div class="pcard-head" onclick="toggleCard('${id}')">
+        <span class="pcard-expand">▸</span>
+        ${avatarHtml}
+        <span class="pcard-rank ${isW?'top16':''}">#${rank}</span>
+        <div class="pcard-info">
+          <div class="pcard-name">${name}</div>
+          ${countryHtml}
+        </div>
+        ${tw?`<a href="${tw}" target="_blank" class="twitch-link" title="Twitch" onclick="event.stopPropagation()">${twitchSVG()}</a>`:''}
+      </div>
+      <div class="pcard-detail">
+        <div>
+          <div class="detail-label">Qualifier Seed Scores</div>
+          <div class="seed-bars">${bars}</div>
+        </div>
+        <div>
+          <div class="detail-label">Model Stats</div>
+          <div class="model-stats">
+            <div class="stat-pill rage">
+              <span class="stat-pill-label">RAGE Factor</span>
+              <span class="stat-pill-value">${ms.rage.toFixed(1)}</span>
+              
+            </div>
+            <div class="stat-pill bait">
+              <span class="stat-pill-label">BAIT Chance</span>
+              <span class="stat-pill-value">${ms.bait.toFixed(1)}</span>
+              
+            </div>
+            <div class="stat-pill cons">
+              <span class="stat-pill-label">Consistency</span>
+              <span class="stat-pill-value">${ms.cons.toFixed(3)}</span>
+              
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-label">Tournament Reach</div>
+          <div class="reach-bars">${(()=>{
+            const reach = ms.reach || {};
+            const milestones = [
+              {key:'top16',    label:'Top 16',   color:'var(--accent)'},
+              {key:'top8',     label:'Top 8',    color:'var(--accent)'},
+              {key:'top4',     label:'Top 4',    color:'var(--gold-hi)'},
+              {key:'finalist', label:'Finalist', color:'var(--gold-hi)'},
+              {key:'champion', label:'Champion', color:'var(--winners)'},
+            ];
+            return milestones.map(m=>{
+              const pct=(reach[m.key]||0)*100;
+              const barW=Math.max(pct,pct>0?0.5:0);
+              return `<div class="reach-row">
+                <span class="reach-label">${m.label}</span>
+                <div class="reach-bar-outer">
+                  <div class="reach-bar-inner" style="width:${barW}%;background:${m.color}"></div>
+                </div>
+                <span class="reach-pct">${pct<0.05&&pct>0?'<0.1':pct.toFixed(1)}%</span>
+              </div>`;
+            }).join('');
+          })()}</div>
+        </div>
+        <div class="stat-grid">
+          <span class="stat-key">Qual. rank</span><span class="stat-val">#${rank}</span>
+          <span class="stat-key">Total score</span><span class="stat-val">${total}</span>
+          <span class="stat-key">Best seed</span><span class="stat-val">${bestSeedStr}</span>
+          <span class="stat-key">Bracket entry</span><span class="stat-val" style="color:${isW?'var(--winners)':'var(--losers)'}">${isW?'Winners':'Losers'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) { document.getElementById(id).classList.toggle('open'); }
+function toggleBracketExpand(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ════════════════════════════ FILL BRACKET ════════════════════════════
+
+function makePick(mid, player) {
+  if (!player) return;
+  picks[mid] = (picks[mid] === player) ? null : player;
+  renderFillGrid();
+  updateProgress();
+}
+
+function resetPicks() {
+  for (const k in picks) picks[k] = null;
+  renderFillGrid();
+  updateProgress();
+}
+
+function updateProgress() {
+  const made = Object.values(picks).filter(Boolean).length;
+  document.getElementById('progress-lbl').textContent = `${made} / ${TOTAL_PICKS} matches picked`;
+  document.getElementById('progress-bar').style.width = `${Math.round(made/TOTAL_PICKS*100)}%`;
+  const wf=picks['W15']||null, lf=picks['L30']||null;
+  const gw=document.getElementById('gf-w'), gl=document.getElementById('gf-l');
+  gw.textContent=wf||'?'; gw.className=wf?'gf-name':'gf-tbd';
+  gl.textContent=lf||'?'; gl.className=lf?'gf-name':'gf-tbd';
+}
+
+function renderFillGrid() {
+  let html = '';
+  for (const sect of FILL_SECTIONS) {
+    html += `<div class="fill-section"><div class="fill-sect-title ${sect.cls}">${sect.title}</div>`;
+    for (const m of sect.matches) {
+      // Resolve player names through the dependency chain
+      const p1name = m.p1 !== undefined ? m.p1 : resolveName(m.dep1);
+      const p2name = m.p2 !== undefined ? m.p2 : resolveName(m.dep2);
+      const s1=m.s1, s2=m.s2;
+      const winner = picks[m.id] || null;
+
+      // Find seeds for resolved players (for later matches)
+      const p1data = p1name ? BY_NAME[p1name] : null;
+      const p2data = p2name ? BY_NAME[p2name] : null;
+      const ps1 = s1 || (p1data ? p1data.rank : null);
+      const ps2 = s2 || (p2data ? p2data.rank : null);
+
+      const picked = winner ? `<span class="picked">✓ ${winner}</span>` : 'pick a winner';
+
+      function btn(pname, pseed) {
+        if (!pname) return `<button class="fill-pbtn tbd">TBD</button>`;
+        const sel = winner === pname ? ' selected' : '';
+        const safe = pname.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        const seedStr = pseed ? `<span class="fill-seed">#${pseed}</span>` : '';
+        return `<button class="fill-pbtn${sel}" onclick="makePick('${m.id}','${safe}')">
+          <span class="fill-dot"></span>${seedStr} ${pname}
+        </button>`;
+      }
+
+      html += `<div class="fill-match">
+        <div class="fill-match-hdr"><span>Match ${m.id}</span><span>${picked}</span></div>
+        <div class="fill-players">${btn(p1name,ps1)}${btn(p2name,ps2)}</div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  document.getElementById('fill-grid').innerHTML = html;
+}
+
+// ════════════════════════════ EXPORT PNG ════════════════════════════
+
+function exportBracket() {
+  // Layout constants
+  const PAD    = 40;
+  const MW     = 200;  // match box width
+  const MH     = 52;   // match box height
+  const MGAP_Y = 12;   // vertical gap between match boxes in same round
+  const RCOL   = 24;   // horizontal gap between rounds
+  const HEADER = 90;
+  const FOOTER = 36;
+
+  // We'll draw Winners bracket left→right (R1 → QF → SF → F → GF)
+  // and Losers bracket below, also flowing left→right
+  // Then connect them with lines
+
+  // ── Helper: resolve player name ──
+  function rp(ref) { return resolveName(ref); }
+  function playerName(m, slot) {
+    if (slot===1) return m.p1!==undefined ? m.p1 : rp(m.dep1);
+    return m.p2!==undefined ? m.p2 : rp(m.dep2);
+  }
+
+  // ── Winners rounds (column data) ──
+  const W_rounds = [
+    FILL_SECTIONS[0].matches,   // WR1 (8)
+    FILL_SECTIONS[2].matches,   // WQF (4)
+    FILL_SECTIONS[4].matches,   // WSF (2)
+    FILL_SECTIONS[7].matches,   // WF  (1)
+  ];
+  // ── Losers rounds ──
+  const L_rounds = [
+    FILL_SECTIONS[1].matches,   // LR1 (8)
+    FILL_SECTIONS[3].matches,   // LR2 (8)
+    FILL_SECTIONS[5].matches,   // LR3 (4)
+    FILL_SECTIONS[6].matches,   // LR4 (4)
+    FILL_SECTIONS[8].matches,   // LR5 (2)
+    FILL_SECTIONS[9].matches,   // LQF (2)
+    FILL_SECTIONS[10].matches,  // LSF (1)
+    FILL_SECTIONS[11].matches,  // LF  (1)
+  ];
+
+  const W_COLS = W_rounds.length;
+  const L_COLS = L_rounds.length;
+
+  // Calculate heights needed per round (each match = MH + MGAP_Y, with grouping space)
+  function colHeight(matches) { return matches.length * (MH + MGAP_Y) - MGAP_Y; }
+
+  const W_HEIGHT = colHeight(W_rounds[0]);  // tallest winners col
+  const L_HEIGHT = colHeight(L_rounds[0]);  // tallest losers col
+
+  // Total canvas dimensions
+  const SECTION_GAP = 48; // gap between winners and losers sections
+  const GF_H = 80;
+  const W_SECTION_H = W_HEIGHT;
+  const L_SECTION_H = L_HEIGHT;
+  const TOTAL_H = HEADER + W_SECTION_H + SECTION_GAP + L_SECTION_H + GF_H + FOOTER + PAD*2;
+  const TOTAL_W = PAD*2 + Math.max(W_COLS, L_COLS) * (MW + RCOL) - RCOL + 40; // needs room for GF at right
+
+  // GF sits at far right vertically centered between both sections
+  const GF_X = PAD + W_COLS * (MW + RCOL);
+  const GF_W = Math.min(MW + 40, 240);
+  const CANVAS_W = GF_X + GF_W + PAD;
+  const CANVAS_H = TOTAL_H;
+
+  const canvas = document.getElementById('export-canvas');
+  canvas.width  = CANVAS_W;
+  canvas.height = CANVAS_H;
+  const ctx = canvas.getContext('2d');
+
+  // ── Colors ──
+  const C = {
+    bg:      '#0d0d0b', surface: '#131310', surface2: '#1a1a16',
+    border:  '#2a2a22', border2: '#3a3a2e', text:     '#ede8d8',
+    muted:   '#7a7060', accent:  '#c8a96e', gold:     '#f0c060',
+    goldmid: '#c8963c', winners: '#4a9f6a', losers:   '#c85a5a',
+    dim:     '#4a3020',
+  };
+
+  // Fill BG
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // ── Header ──
+  ctx.fillStyle = C.surface; ctx.fillRect(0, 0, CANVAS_W, HEADER);
+  ctx.strokeStyle = C.border2; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, HEADER); ctx.lineTo(CANVAS_W, HEADER); ctx.stroke();
+
+  ctx.fillStyle = C.accent;
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('RAGEBAIT — DRL S2 Playoffs · Your Bracket', PAD, 36);
+  ctx.fillStyle = C.muted; ctx.font = '12px monospace';
+  ctx.fillText('Generated ' + new Date().toLocaleDateString(), PAD, 56);
+  const wfname = picks['W15']||'?', lfname = picks['L30']||'?';
+  ctx.fillStyle = C.accent; ctx.font = '12px monospace';
+  ctx.fillText(`Grand Final: ${wfname} vs ${lfname}`, PAD, 74);
+
+  // ── Section label helper ──
+  function sectionLabel(label, x, y, color) {
+    ctx.fillStyle = color;
+    ctx.font = 'bold 10px monospace';
+    ctx.fillText(label.toUpperCase(), x, y - 4);
+    ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + MW, y); ctx.stroke();
+  }
+
+  // ── Draw one match box, return center-right {x,y} for connector ──
+  function drawMatchBox(m, x, y, isWinners) {
+    const p1 = playerName(m, 1);
+    const p2 = playerName(m, 2);
+    const winner = picks[m.id] || null;
+    const picked = !!winner;
+
+    // Box background + border
+    ctx.fillStyle = C.surface;
+    ctx.fillRect(x, y, MW, MH);
+    ctx.strokeStyle = picked ? C.accent : C.border;
+    ctx.lineWidth = picked ? 1.5 : 1;
+    ctx.strokeRect(x, y, MW, MH);
+
+    // Match id strip
+    ctx.fillStyle = C.surface2;
+    ctx.fillRect(x, y, MW, 16);
+    ctx.strokeStyle = C.border; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, y+16); ctx.lineTo(x+MW, y+16); ctx.stroke();
+    ctx.fillStyle = C.muted; ctx.font = '9px monospace';
+    ctx.fillText('Match ' + m.id, x + 5, y + 11);
+    if (picked) {
+      ctx.fillStyle = C.accent;
+      ctx.font = '9px monospace';
+      const wlabel = '✓ ' + winner.slice(0,18);
+      const ww = ctx.measureText(wlabel).width;
+      ctx.fillText(wlabel, x + MW - ww - 5, y + 11);
+    }
+
+    // Divider between players
+    ctx.strokeStyle = C.border; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, y+34); ctx.lineTo(x+MW, y+34); ctx.stroke();
+
+    // p2 (top slot)
+    ctx.font = '12px sans-serif';
+    const p2w = winner && winner === p2;
+    ctx.fillStyle = p2w ? C.accent : (p2 ? C.text : C.dim);
+    ctx.fillText((p2||'TBD').slice(0,22), x + 6, y + 28);
+
+    // p1 (bottom slot)
+    const p1w = winner && winner === p1;
+    ctx.fillStyle = p1w ? C.accent : (p1 ? C.text : C.dim);
+    ctx.fillText((p1||'TBD').slice(0,22), x + 6, y + 47);
+
+    // Return center-Y of box for connectors
+    return { cx: x + MW, cy: y + MH/2, lx: x, ly: y + MH/2 };
+  }
+
+  // ── Draw a round column, return array of {cx,cy} for each match ──
+  function drawRound(matches, colX, baseY, isWinners, label) {
+    const n = matches.length;
+    const totalH = n * (MH + MGAP_Y) - MGAP_Y;
+    const startY = baseY + (isWinners ? 0 : (colHeight(W_rounds[0]) - totalH) / 2);
+
+    if (label) sectionLabel(label, colX, startY - 14, isWinners ? C.winners : C.losers);
+
+    return matches.map((m, i) => {
+      const my = startY + i * (MH + MGAP_Y);
+      return drawMatchBox(m, colX, my, isWinners);
+    });
+  }
+
+  // ── Draw horizontal connector lines between rounds ──
+  function drawConnectors(prevCenters, nextCenters, isWinners) {
+    ctx.strokeStyle = isWinners ? 'rgba(74,159,106,0.3)' : 'rgba(200,90,90,0.25)';
+    ctx.lineWidth = 1;
+    // Each next match pairs two prev matches (they feed in)
+    for (let i = 0; i < nextCenters.length; i++) {
+      const src1 = prevCenters[i*2];
+      const src2 = prevCenters[i*2+1];
+      const dst  = nextCenters[i];
+      if (!src1 || !dst) continue;
+      const midX = src1.cx + (dst.lx - src1.cx) / 2;
+      ctx.beginPath();
+      ctx.moveTo(src1.cx, src1.cy);
+      ctx.lineTo(midX, src1.cy);
+      if (src2) { ctx.moveTo(src2.cx, src2.cy); ctx.lineTo(midX, src2.cy); }
+      const avgY = src2 ? (src1.cy + src2.cy)/2 : src1.cy;
+      ctx.moveTo(midX, src1.cy);
+      if (src2) ctx.lineTo(midX, src2.cy);
+      ctx.moveTo(midX, avgY);
+      ctx.lineTo(dst.lx, dst.cy);
+      ctx.stroke();
+    }
+  }
+
+  // ══ DRAW WINNERS BRACKET ══
+  const W_BASE_Y = HEADER + PAD;
+  let prevW = null;
+  const W_labels = ['Winners R1', 'Winners QF', 'Winners SF', 'Winners Final'];
+  const wCenters = [];
+  for (let c = 0; c < W_rounds.length; c++) {
+    const colX = PAD + c * (MW + RCOL);
+    const centers = drawRound(W_rounds[c], colX, W_BASE_Y, true, W_labels[c]);
+    wCenters.push(centers);
+    if (prevW) drawConnectors(prevW, centers, true);
+    prevW = centers;
+  }
+
+  // ══ DRAW LOSERS BRACKET ══
+  const L_BASE_Y = HEADER + PAD + W_SECTION_H + SECTION_GAP;
+
+  // Losers section header
+  ctx.fillStyle = C.losers; ctx.font = 'bold 11px monospace';
+  ctx.fillText('LOSERS BRACKET', PAD, L_BASE_Y - 10);
+  ctx.strokeStyle = C.losers; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, L_BASE_Y - 6); ctx.lineTo(PAD + (L_rounds.length * (MW + RCOL)) - RCOL, L_BASE_Y - 6); ctx.stroke();
+
+  const L_labels = ['Losers R1','Losers R2','Losers R3','Losers R4','Losers R5','Losers QF','Losers SF','Losers Final'];
+  let prevL = null;
+  const lCenters = [];
+  for (let c = 0; c < L_rounds.length; c++) {
+    const colX = PAD + c * (MW + RCOL);
+    const n = L_rounds[c].length;
+    const totalH = n * (MH + MGAP_Y) - MGAP_Y;
+    const startY = L_BASE_Y + (colHeight(L_rounds[0]) - totalH) / 2;
+    if (L_labels[c]) sectionLabel(L_labels[c], colX, startY - 14, false);
+    const centers = L_rounds[c].map((m, i) => {
+      const my = startY + i * (MH + MGAP_Y);
+      return drawMatchBox(m, colX, my, false);
+    });
+    lCenters.push(centers);
+    if (prevL) drawConnectors(prevL, centers, false);
+    prevL = centers;
+  }
+
+  // ══ GRAND FINAL ══
+  const GF_CENTER_Y = HEADER + PAD + W_SECTION_H + (SECTION_GAP + L_SECTION_H) / 2;
+  const GF_BOX_Y = GF_CENTER_Y - GF_H/2;
+  const GF_BOX_X = PAD + Math.max(W_COLS, L_COLS) * (MW + RCOL);
+  const GF_BOX_W = GF_W;
+
+  // Connector from WF to GF
+  const lastW = wCenters[wCenters.length-1][0];
+  ctx.strokeStyle = 'rgba(240,192,96,0.35)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(lastW.cx, lastW.cy); ctx.lineTo(GF_BOX_X, GF_CENTER_Y - 16); ctx.stroke();
+
+  // Connector from LF to GF
+  const lastL = lCenters[lCenters.length-1][0];
+  ctx.beginPath(); ctx.moveTo(lastL.cx, lastL.cy); ctx.lineTo(GF_BOX_X, GF_CENTER_Y + 16); ctx.stroke();
+
+  // GF box
+  ctx.fillStyle = C.surface;
+  ctx.fillRect(GF_BOX_X, GF_BOX_Y, GF_BOX_W, GF_H);
+  ctx.strokeStyle = C.goldmid; ctx.lineWidth = 2;
+  ctx.strokeRect(GF_BOX_X, GF_BOX_Y, GF_BOX_W, GF_H);
+
+  // GF header
+  ctx.fillStyle = '#1a1a16'; ctx.fillRect(GF_BOX_X, GF_BOX_Y, GF_BOX_W, 18);
+  ctx.fillStyle = C.gold; ctx.font = 'bold 10px monospace';
+  ctx.fillText('🏆 GRAND FINAL · BO3', GF_BOX_X + 6, GF_BOX_Y + 13);
+
+  ctx.strokeStyle = C.border; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(GF_BOX_X, GF_BOX_Y+18); ctx.lineTo(GF_BOX_X+GF_BOX_W, GF_BOX_Y+18); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(GF_BOX_X, GF_BOX_Y+GF_H/2+1); ctx.lineTo(GF_BOX_X+GF_BOX_W, GF_BOX_Y+GF_H/2+1); ctx.stroke();
+
+  // GF sub-labels
+  ctx.fillStyle = C.muted; ctx.font = '9px monospace';
+  ctx.fillText('Winners finalist', GF_BOX_X + 6, GF_BOX_Y + 30);
+  ctx.fillStyle = wfname !== '?' ? C.accent : C.dim; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText(wfname.slice(0, 18), GF_BOX_X + 6, GF_BOX_Y + 44);
+
+  ctx.fillStyle = C.muted; ctx.font = '9px monospace';
+  ctx.fillText('Losers finalist', GF_BOX_X + 6, GF_BOX_Y + GF_H/2 + 14);
+  ctx.fillStyle = lfname !== '?' ? C.accent : C.dim; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText(lfname.slice(0, 18), GF_BOX_X + 6, GF_BOX_Y + GF_H/2 + 28);
+
+  ctx.fillStyle = C.muted; ctx.font = '9px monospace';
+  ctx.fillText('W starts 1-0', GF_BOX_X + 6, GF_BOX_Y + GF_H - 6);
+
+  // ── Footer ──
+  ctx.fillStyle = C.dim; ctx.font = '11px monospace';
+  ctx.fillText('RAGEBAIT · DRL Season 2 · drl.forsa.tv', PAD, CANVAS_H - 10);
+
+  // Download
+  const link = document.createElement('a');
+  link.download = 'ragebait-bracket.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ════════════════════════════ INIT ════════════════════════════
+renderBracket();
+renderPlayers();
+renderFillGrid();
+updateProgress();
+</script>
+</body>
+</html>
